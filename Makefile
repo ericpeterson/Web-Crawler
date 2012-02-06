@@ -5,14 +5,22 @@ LIBOBJ = utils/obj
 LIBOBJ_FILES = $(LIBOBJ)/StringUtil.o $(LIBOBJ)/URLInputStream.o $(LIBOBJ)/FileInputStream.o $(LIBOBJ)/HTTPInputStream.o \
 $(LIBOBJ)/CommandRunner.o $(LIBOBJ)/FileSystem.o $(LIBOBJ)/HTMLToken.o $(LIBOBJ)/HTMLTokenizer.o
  
-bin: obj/helloMake.o lib 
+bin: bin/crawler 
+test: bin/testdriver run-test
+lib: lib/libcs240utils.a
+clean: 
+	- rm -f bin/* lib/*.a obj/* $(LIBOBJ)/*
+run-test:
+	bin/testdriver
+
+
+bin/crawler: obj/helloMake.o lib/libcs240utils.a
 	g++ -o bin/crawler obj/helloMake.o $(LFLAGS)
 
-test: obj/testDriver.o lib
+bin/testdriver: obj/testDriver.o lib/libcs240utils.a
 	g++ -o bin/testdriver obj/testDriver.o $(LFLAGS) 
-	bin/testdriver
- 
-lib: $(LIBOBJ_FILES) 	
+
+lib/libcs240utils.a: $(LIBOBJ_FILES)
 	ar r lib/libcs240utils.a $(LIBOBJ_FILES)
 
 obj/helloMake.o: src/helloMake.cpp
@@ -44,8 +52,5 @@ $(LIBOBJ)/HTMLToken.o: utils/src/HTMLToken.cpp utils/include/HTMLToken.h
 
 $(LIBOBJ)/HTMLTokenizer.o: utils/src/HTMLTokenizer.cpp utils/include/HTMLTokenizer.h
 	g++ -o $(LIBOBJ)/HTMLTokenizer.o $(CFLAGS) utils/include/ utils/src/HTMLTokenizer.cpp
-
-clean: 
-	- rm -f bin/* lib/*.a obj/* $(LIBOBJ)/*
 
 .PHONY: src inc bin lib obj utils 
