@@ -17,7 +17,7 @@ run-test:
 	bin/testdriver
 
 
-.PHONY: bin lib test clean run-test 
+.PHONY: bin lib test clean run-test
 
 
 bin/crawler: obj/helloMake.o lib/libcs240utils.a
