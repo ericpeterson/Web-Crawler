@@ -1,3 +1,6 @@
+# Macros and existing pseudo-targets should not be modified.
+# There is a section to add new pseudo-targets commented below.
+
 CFLAGS = -c -g -Wall
 LFLAGS = -L lib/ -l cs240utils
 
@@ -21,14 +24,21 @@ run-test:
 	bin/testdriver
 
 
+# Add new pseudo-targets here
+
 .PHONY: bin lib test clean run-test
 
+
+# These are the only dependency lines that may change during development
 
 bin/crawler: obj/helloMake.o lib/libcs240utils.a
 	g++ -o bin/crawler obj/helloMake.o $(LFLAGS)
 
 bin/testdriver: obj/testDriver.o lib/libcs240utils.a
 	g++ -o bin/testdriver obj/testDriver.o $(LFLAGS)
+
+
+# Dependencies lines beyond this point should not change
 
 lib/libcs240utils.a: $(LIBOBJ_FILES)
 	ar r lib/libcs240utils.a $(LIBOBJ_FILES)
