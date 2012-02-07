@@ -2,16 +2,22 @@ CFLAGS = -c -g -Wall -I
 LFLAGS = -L lib/ -l cs240utils
 
 LIBOBJ = utils/obj
-LIBOBJ_FILES = $(LIBOBJ)/StringUtil.o $(LIBOBJ)/URLInputStream.o $(LIBOBJ)/FileInputStream.o $(LIBOBJ)/HTTPInputStream.o \
-$(LIBOBJ)/CommandRunner.o $(LIBOBJ)/FileSystem.o $(LIBOBJ)/HTMLToken.o $(LIBOBJ)/HTMLTokenizer.o
- 
+LIBOBJ_FILES = $(LIBOBJ)/StringUtil.o $(LIBOBJ)/URLInputStream.o \
+  $(LIBOBJ)/FileInputStream.o $(LIBOBJ)/HTTPInputStream.o \
+  $(LIBOBJ)/CommandRunner.o $(LIBOBJ)/FileSystem.o $(LIBOBJ)/HTMLToken.o \
+  $(LIBOBJ)/HTMLTokenizer.o
+
+
 bin: bin/crawler 
-test: bin/testdriver run-test
 lib: lib/libcs240utils.a
+test: bin/testdriver run-test
 clean: 
 	- rm -f bin/* lib/*.a obj/* $(LIBOBJ)/*
 run-test:
 	bin/testdriver
+
+
+.PHONY: bin lib test clean run-test 
 
 
 bin/crawler: obj/helloMake.o lib/libcs240utils.a
@@ -53,4 +59,3 @@ $(LIBOBJ)/HTMLToken.o: utils/src/HTMLToken.cpp utils/include/HTMLToken.h
 $(LIBOBJ)/HTMLTokenizer.o: utils/src/HTMLTokenizer.cpp utils/include/HTMLTokenizer.h
 	g++ -o $(LIBOBJ)/HTMLTokenizer.o $(CFLAGS) utils/include/ utils/src/HTMLTokenizer.cpp
 
-.PHONY: src inc bin lib obj utils 
