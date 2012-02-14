@@ -10,6 +10,11 @@ typedef string Description;
 
 /**
  *  Parses the downloaded HTML document
+ *
+ *  (TA use) Class Responsibilities:
+ *
+ *    * Parses words, links, and description from HTML pages
+ *    * Populate word index
  */
 class HTMLParser {
   public:

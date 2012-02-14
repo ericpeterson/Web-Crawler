@@ -13,6 +13,10 @@ typedef string FileName;
 
 /**
  *  The driver for the dowloading and indexing of documents
+ *
+ *  (TA Use) Class Responsibilities:
+ *
+ *    * Drive the overall crawling process
  */
 class WebCrawler {
   public:

@@ -2,10 +2,20 @@
 #define _XML_GENERATOR_H_
 
 #include <string>
+#include "URL.h"
+#include "PageSet.h"
+#include "WordIndex.h"
 using namespace std;
 
 typedef string XMLDoc;
 
+/**
+ *  Generates the XML output of the web crawler
+ *
+ *  (TA use) Class Responsibilities:
+ *
+ *    * Generate XML output file
+ */
 class XMLGenerator {
   public:
 
