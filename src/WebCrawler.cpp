@@ -45,21 +45,20 @@ Status WebCrawler::crawl () {
     URLInputStream documentStream(currentURL.getURLString());
     
     // For all text areas in the page, parse out all of the words
-    HTMLParser htmlParser(&documentStream);
+    HTMLParser htmlParser(documentStream);
     htmlParser.parse();
  
     // For all <A> tags with HREF attributes, add the URLs in the HREF attributes
     // to the set of pages that still need to be indexed (but only if they're HTML
     // files with the same prefix as the start URL)
-    Queue<URL> hrefLinks = htmlParser.getLinks();
-    while (!hrefLinks.isEmpty()) {
-      unprocessedPages.enqueue(hrefLinks.dequeue());
+    LinksList hrefLinks = htmlParser.getLinks();
+    while (!hrefLinks.hasNext()) {
+      unprocessedPages.enqueue(hrefLinks.next());
     }
 
     // Save summary information for the page
     currentPage.setDescription(htmlParser.getDescription());
     currentPage.setWords(htmlParser.getWords());
-    currentPage.setLinks(htmlParser.getLinks());
     
     visitedPages.add(currentPage);
 

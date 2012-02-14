@@ -94,6 +94,6 @@ class WebCrawler {
      *  Deallocates heap memory used by this WebCrawler
      */
     void free ();
-}
+};
 
 #endif
