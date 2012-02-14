@@ -3,6 +3,11 @@
 
 #include <string>
 #include "URL.h"
+#include "Status.h"
+#include "PageQueue.h"
+#include "PageSet.h"
+#include "StopWords.h"
+#include "WordIndex.h"
 
 typedef string FileName;
 
@@ -58,9 +63,22 @@ class WebCrawler {
 
   private:
 
+    // The starting URL of the web crawler
     URL startURL;
-    FileName output;
-    FileName stopWord;
+
+    // A collection of web pages yet to be indexed
+    PageQueue unprocessedPages;
+
+    // A set of pages that have already been processed. Helps prevent the same
+    // page from indexed twice.
+    PageSet processedPages;
+
+    // A collection of words the indexer should ignore
+    StopWords stopWords;
+
+    // A mapping of the indexed words to their web pages. Used to generate XML output.
+    WordIndex wordIndex;
+
 
     /**
      *  Performs the leg-work for the copy constructor and assignment operator

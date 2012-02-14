@@ -1,11 +1,23 @@
-#include "Queue.h"
+#include <string>
+#include "URL.h"
+#include "Status.h"
 #include "URLInputStream.h"
 #include "HTMLParser.h"
+#include "Page.h"
 
-WebCrawler::WebCrawler () {}
+typedef string FileName;
 
 
-WebCrawler::~WebCrawler () {}
+WebCrawler::WebCrawler (URL start) : 
+    startURL(start), unprocessedPages(new PageQueue())
+  , processedPages(new PageSet()), stopWords(new StopWords())
+  , wordIndex(new WordIndex()) 
+  {}
+
+
+WebCrawler::~WebCrawler () {
+  free();
+}
     
 
 WebCrawler::WebCrawler (const WebCrawler & wcCopy) {
@@ -19,34 +31,62 @@ WebCrawler & WebCrawler::operator = (const WebCrawler & wcCopy) {
 }
 
 
-Status WebCrawler::crawl (URL startURL, FileName output, FileName stopWord) {
-  Queue<Pages> pageQueue(startURL);
-  URL current;
+Status WebCrawler::crawl () {
+  Page currentPage;
+  URL currentURL;
 
-  // select start url
-  while (!pageQueue.isEmpty()) {
-    current = pageQueue.dequeue();
-    // resolve current url if necessary
-    // determine http:// or file://
-    // download selected page
-    URLInputStream UIStream(current);
-    // for all text areas in page, parse out words
-    // for <a> tags add page to set that still needs to be indexed (queue)
-    // Save Summary information
-    HTMLParser htmlParser;
-    htmlParser.parse(UIStream);
-    // Repeat until no pages left to index
+  while (!unprocessedPages.isEmpty()) {
+
+    // Select a page that has not been indexed
+    currentPage = unprocessedPages.dequeue();
+    currentURL = currentPage.getURL();
+
+    // Download selected page
+    URLInputStream documentStream(currentURL.getURLString());
+    
+    // For all text areas in the page, parse out all of the words
+    HTMLParser htmlParser(&documentStream);
+    htmlParser.parse();
+ 
+    // For all <A> tags with HREF attributes, add the URLs in the HREF attributes
+    // to the set of pages that still need to be indexed (but only if they're HTML
+    // files with the same prefix as the start URL)
+    Queue<URL> hrefLinks = htmlParser.getLinks();
+    while (!hrefLinks.isEmpty()) {
+      unprocessedPages.enqueue(hrefLinks.dequeue());
+    }
+
+    // Save summary information for the page
+    currentPage.setDescription(htmlParser.getDescription());
+    currentPage.setWords(htmlParser.getWords());
+    currentPage.setLinks(htmlParser.getLinks());
+    
+    visitedPages.add(currentPage);
+
+    documentStream.Close();
+    delete documentStream;
+
+    // Repeat until there are no pages left to index
   }
 }
 
 
 WebCrawler & WebCrawler::copy (const WebCrawler & wcCopy) {
   if (this != &wcCopy) {
-    
+    startURL = wcCopy.startURL;
+    unprocessedPages = wcCopy.unprocessedPages;
+    processedPages = wcCopy.processedPages;
+    stopWords = wcCopy.stopWords;
+    wordIndex = wcCopy.wordIndex;
   }
 
   return *this;
 }
 
 
-void WebCrawler::free () {}
+void WebCrawler::free () {
+  delete unprocessedPages;
+  delete processedPages;
+  delete stopWords;
+  delete wordIndex;
+}
