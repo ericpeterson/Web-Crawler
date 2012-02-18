@@ -10,6 +10,9 @@ LIBOBJ_FILES = $(LIBOBJ)/StringUtil.o $(LIBOBJ)/URLInputStream.o \
   $(LIBOBJ)/CommandRunner.o $(LIBOBJ)/FileSystem.o $(LIBOBJ)/HTMLToken.o \
   $(LIBOBJ)/HTMLTokenizer.o
 
+SRC_OBJ = obj
+SRC_OBJ_FILES = $(SRC_OBJ)/URL.o
+
 INCLUDE = inc
 LIB_INCLUDE = utils/include
 
@@ -19,7 +22,7 @@ bin: bin/crawler
 lib: lib/libcs240utils.a
 test: bin/testdriver run-test
 clean: 
-	- rm -f bin/* lib/*.a obj/* $(LIBOBJ)/*
+	- rm -f bin/* lib/*.a $(SRC_OBJ)/* $(LIBOBJ)/*
 run-test:
 	bin/testdriver
 
@@ -31,11 +34,11 @@ run-test:
 
 # These are the only dependency lines that may change during development
 
-bin/crawler: obj/helloMake.o lib/libcs240utils.a
-	g++ -o bin/crawler obj/helloMake.o $(LFLAGS)
+bin/crawler: $(SRC_OBJ)/helloMake.o lib/libcs240utils.a
+	g++ -o bin/crawler $(SRC_OBJ)/helloMake.o $(LFLAGS)
 
-bin/testdriver: obj/testDriver.o lib/libcs240utils.a
-	g++ -o bin/testdriver obj/testDriver.o $(LFLAGS)
+bin/testdriver: $(SRC_OBJ)/testDriver.o $(SRC_OBJ_FILES) lib/libcs240utils.a
+	g++ -o bin/testdriver $(SRC_OBJ)/testDriver.o $(SRC_OBJ_FILES) $(LFLAGS)
 
 
 # Dependencies lines beyond this point should not change
@@ -43,11 +46,14 @@ bin/testdriver: obj/testDriver.o lib/libcs240utils.a
 lib/libcs240utils.a: $(LIBOBJ_FILES)
 	ar r lib/libcs240utils.a $(LIBOBJ_FILES)
 
-obj/helloMake.o: src/helloMake.cpp
-	g++ -o obj/helloMake.o $(CFLAGS) src/helloMake.cpp
+$(SRC_OBJ)/helloMake.o: src/helloMake.cpp
+	g++ -o $(SRC_OBJ)/helloMake.o $(CFLAGS) src/helloMake.cpp
 
-obj/testDriver.o: src/testDriver.cpp
-	g++ -o obj/testDriver.o $(CFLAGS) src/testDriver.cpp
+$(SRC_OBJ)/URL.o: src/URL.cpp
+	g++ -o $(SRC_OBJ)/URL.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) src/URL.cpp
+
+$(SRC_OBJ)/testDriver.o: src/testDriver.cpp
+	g++ -o $(SRC_OBJ)/testDriver.o $(CFLAGS) -I $(INCLUDE) src/testDriver.cpp
 
 $(LIBOBJ)/StringUtil.o: $(LIB_SRC)/StringUtil.cpp $(LIB_INCLUDE)/StringUtil.h
 	g++ -o $(LIBOBJ)/StringUtil.o $(CFLAGS) -I $(LIB_INCLUDE) $(LIB_SRC)/StringUtil.cpp
