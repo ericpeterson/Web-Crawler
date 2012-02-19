@@ -135,7 +135,7 @@ class URL {
      *
      *  @return The absolute, resolved URL
      */
-    char* resolve (char* baseURL, char* relativeURL) const;
+    char* resolve (char* baseURL, char* relativeURL);
 
 
     /**
@@ -167,6 +167,24 @@ class URL {
      *  @return the adjusted base pointer
      */
     char* calculateBasePtr (int baseLength, char* basePtr);
+
+
+    /**
+     *  A valid URL has the general form
+     *
+     *    <scheme>://<net_loc>/<path>?<query>#<fragment>
+     *
+     *  The minimum requirements for a valid url include:
+     *
+     *    * scheme must either be `http` or `file`
+     *    * if scheme is `http` then net_loc must be non-empty
+     *    * if scheme is `file` then net_loc must be empty
+     *
+     *  @param url The url to be validated
+     *
+     *  @return true if the minimum requirements are met; false otherwise
+     */
+    bool checkIfValid (string url);
 
 
     /**

@@ -16,35 +16,46 @@ URL::URL () :
 
 
 URL::URL (string absoluteURL) : description("") {
-  string urlPrefix;
-  string urlPageName;
-  
-  this->parseURL(absoluteURL, urlPrefix, urlPageName);
+  string urlPrefix = "";
+  string urlPageName = "";
+
+  bool isValidURL = checkIfValid(absoluteURL);
+
+  // Only parse if absoluteURL is a valid absolute URL
+  if (true == isValidURL) {
+    this->parseURL(absoluteURL, urlPrefix, urlPageName);
+  }
 
   this->prefix = urlPrefix;
   this->pageName = urlPageName;
 }
 
 
-URL::URL (string url, string baseURL) {
+URL::URL (string url, string baseURL) : description("") {
   string resolvedURL(url);
-  string scheme;
   string urlPrefix;
   string urlPageName;
-  
+
   /*
-    When searching the url for 'http://' or 'file://', we search the substring
-    from index 0 plus 7 characters
+    We expect url to be an invalid absolute url (a relative url) and baseURL to
+    be valid
   */
-  const Index start = 0;
-  const Index schemeLength = 7;
+  bool urlIsValid = checkIfValid(url);
+  bool baseURLIsValid = checkIfValid(baseURL);
 
-  scheme = url.substr(start, schemeLength);  
-
-  if (("http://" != scheme) && ("file://" != scheme)) {
+  /*
+    Resolve the url in the normal way if the input is valid. If the base URL is
+    invalid, resolve the url to the empty string. Otherwise url is an absolute
+    url and there is no need to resolve it.
+  */
+  if ((false == urlIsValid) && (true == baseURLIsValid)) {
     char* relativeURLCstring = (char*)url.c_str();
     char* baseURLCstring = (char*)baseURL.c_str();
-    resolvedURL = this->resolve(relativeURLCstring, baseURLCstring);
+    resolvedURL = this->resolve(baseURLCstring, relativeURLCstring);
+  } else if ((false == urlIsValid) && (false == baseURLIsValid)) {
+    resolvedURL = "";
+  } else {
+    // url is absolute. No need to resolve
   }
 
   this->parseURL(resolvedURL, urlPrefix, urlPageName);
@@ -65,6 +76,45 @@ URL::URL (const URL & uCopy) {
 URL & URL::operator = (const URL & uCopy) {
   free();
   return copy(uCopy);
+}
+
+
+bool URL::checkIfValid (string url) {
+  string scheme;
+  Index start = 0;
+  Index schemeLength = 7;
+  int urlLength = url.length();
+  bool isValid = true;
+  const int net_locIndex = 7;
+
+  /*
+    scheme http must have at least 8 characters. i.e. `http://<net_loc>` where
+    <net_loc> has at least one character. 
+  */
+  const int acceptableHTTPLength = 8;
+
+  /*
+    scheme file must have at least 7 characters. i.e. `file://`
+  */
+  const int acceptableFILELength = 7;
+
+  scheme = url.substr(start, schemeLength);
+
+  if (("file://" != scheme) && ("http://" != scheme)) {
+    isValid = false; 
+  } else if ("http://" == scheme) {
+    if ((urlLength < acceptableHTTPLength) || ('/' == url.at(net_locIndex))) {
+      isValid = false;
+    }
+  } else {
+    if (urlLength < acceptableFILELength) {
+      isValid = false;
+    } else if ((urlLength > acceptableFILELength) && ('/' != url.at(net_locIndex))) {
+      isValid = false;
+    }
+  }
+
+  return isValid;
 }
 
 
@@ -129,7 +179,7 @@ char* URL::doDotCase (char* basePtr, int baseLength, int relativeLength) {
 } 
 
 
-char* URL::resolve (char* baseURL, char* relativeURL) const {
+char* URL::resolve (char* baseURL, char* relativeURL) {
   int baseLength = strlen(baseURL);
   int relativeLength = strlen(relativeURL);
   int absoluteURLLength = baseLength + relativeLength + 1;
@@ -185,27 +235,36 @@ bool URL::Test (ostream & os) {
   string startURL("file:///home/eric/myWebPages/coolEric.html");
   string relativeURL("./.././././../natalie/herWebPages/nattles.html");
 
-  // Default constructor
-  URL urlDefaultConstructor;
-  TEST(urlDefaultConstructor.prefix == "");
-  TEST(urlDefaultConstructor.pageName == "");
-  TEST(urlDefaultConstructor.description == "");
-
-  // setDescription() function
-  urlDefaultConstructor.setDescription("This is a cool description");
-  TEST(urlDefaultConstructor.description == "This is a cool description");
-
   // One arg constructor
   URL startURLConstructor(startURL);
   TEST(startURLConstructor.prefix == "file:///home/eric/myWebPages/");
   TEST(startURLConstructor.pageName == "coolEric.html");
   TEST(startURLConstructor.description == "");
 
+  URL url2("file://");
+  TEST(url2.prefix == "file://");
+  TEST(url2.pageName == "");
+  TEST(url2.description == "");
+
+  // setDescription() function
+  startURLConstructor.setDescription("This is a cool description");
+  TEST(startURLConstructor.description == "This is a cool description");
+
   // Two arg constructor
   URL urlOverloadedConstructor(relativeURL, startURL);
   TEST(urlOverloadedConstructor.prefix == "file:///home/natalie/herWebPages/");
   TEST(urlOverloadedConstructor.pageName == "nattles.html");
   TEST(urlOverloadedConstructor.description == "");
+
+  // Assignment operator - addresses shouldn't match but values should
+  urlOverloadedConstructor.setDescription("Yeuaepoij#aqa3!");
+  startURLConstructor = urlOverloadedConstructor;
+  TEST((&(urlOverloadedConstructor.prefix)) != (&(startURLConstructor.prefix)));
+  TEST((&(urlOverloadedConstructor.pageName)) != (&(startURLConstructor.pageName)));
+  TEST((&(urlOverloadedConstructor.description)) != (&(startURLConstructor.description)));
+  TEST(urlOverloadedConstructor.prefix == startURLConstructor.prefix);
+  TEST(urlOverloadedConstructor.pageName == startURLConstructor.pageName);
+  TEST(urlOverloadedConstructor.description == startURLConstructor.description);
 
   return success;
 }
@@ -221,9 +280,20 @@ void URL::parseURL (string url, string & urlPrefix, string & urlPageName) const 
     Index lastSlashPosition;
     Index lastSlashPositionPlusOne;
     Index start = 0;
+    Index net_locIndex = 7;
 
     lastSlashPosition = url.find_last_of(forwardSlash);
-    assert(lastSlashPosition > 7);
+
+    // url is an invalid URL
+    if (string::npos == lastSlashPosition) {
+      urlPrefix = "";
+      urlPageName = "";
+      return;
+    } else if (lastSlashPosition < net_locIndex) {
+      urlPrefix = url;
+      urlPageName = "";
+      return;
+    }
 
     /*
       This value will be used to include the '/' in the prefix and exclude the
