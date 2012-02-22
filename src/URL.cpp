@@ -11,8 +11,7 @@ typedef size_t Index;
 URL::URL () : 
     prefix("")
   , pageName("")
-  , description("")
-{}
+  , description("") {}
 
 
 URL::URL (string absoluteURL) : description("") {

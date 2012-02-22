@@ -13,6 +13,7 @@ LIBOBJ_FILES = $(LIBOBJ)/StringUtil.o $(LIBOBJ)/URLInputStream.o \
 SRC_OBJ = obj
 SRC_OBJ_FILES = $(SRC_OBJ)/URL.o
 
+SRC = src
 INCLUDE = inc
 LIB_INCLUDE = utils/include
 
@@ -25,11 +26,12 @@ clean:
 	- rm -f bin/* lib/*.a $(SRC_OBJ)/* $(LIBOBJ)/*
 run-test:
 	bin/testdriver
-
+check-style:
+	~cs240ta/bin/CppCheckStyle/CppCheckStyle $(SRC)/*.cpp $(INCLUDE)/*.h $(LIB_INCLUDE)/*.h
 
 # Add new pseudo-targets here
 
-.PHONY: bin lib test clean run-test
+.PHONY: bin lib test clean run-test check-style
 
 
 # These are the only dependency lines that may change during development
@@ -46,14 +48,14 @@ bin/testdriver: $(SRC_OBJ)/testDriver.o $(SRC_OBJ_FILES) lib/libcs240utils.a
 lib/libcs240utils.a: $(LIBOBJ_FILES)
 	ar r lib/libcs240utils.a $(LIBOBJ_FILES)
 
-$(SRC_OBJ)/helloMake.o: src/helloMake.cpp
-	g++ -o $(SRC_OBJ)/helloMake.o $(CFLAGS) src/helloMake.cpp
+$(SRC_OBJ)/helloMake.o: $(SRC)/helloMake.cpp
+	g++ -o $(SRC_OBJ)/helloMake.o $(CFLAGS) $(SRC)/helloMake.cpp
 
-$(SRC_OBJ)/URL.o: src/URL.cpp
-	g++ -o $(SRC_OBJ)/URL.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) src/URL.cpp
+$(SRC_OBJ)/URL.o: $(SRC)/URL.cpp
+	g++ -o $(SRC_OBJ)/URL.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/URL.cpp
 
-$(SRC_OBJ)/testDriver.o: src/testDriver.cpp
-	g++ -o $(SRC_OBJ)/testDriver.o $(CFLAGS) -I $(INCLUDE) src/testDriver.cpp
+$(SRC_OBJ)/testDriver.o: $(SRC)/testDriver.cpp
+	g++ -o $(SRC_OBJ)/testDriver.o $(CFLAGS) -I $(INCLUDE) $(SRC)/testDriver.cpp
 
 $(LIBOBJ)/StringUtil.o: $(LIB_SRC)/StringUtil.cpp $(LIB_INCLUDE)/StringUtil.h
 	g++ -o $(LIBOBJ)/StringUtil.o $(CFLAGS) -I $(LIB_INCLUDE) $(LIB_SRC)/StringUtil.cpp
