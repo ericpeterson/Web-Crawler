@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "URL.h"
+#include "LinkedList.h"
 #include "BST.h"
 using namespace std;
 
@@ -14,6 +15,11 @@ int main (int argc, char* argv[]) {
   }
 
   testResult = BST<string>::Test(cout);
+  if (false == testResult) {
+    success = false;
+  }
+
+  testResult = LinkedList<string>::Test(cout);
   if (false == testResult) {
     success = false;
   }
