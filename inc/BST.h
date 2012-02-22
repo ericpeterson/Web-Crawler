@@ -10,48 +10,40 @@ class BST;
 
 //!  BSTNode implements a binary search tree node
 template<class Type>
-class BSTNode 
-{
+class BSTNode {
 		friend class BST<Type>;   //!< BST can access private members of BSTNode
 	
 	public:
 		//!  Constructor
 		BSTNode(const Type & v) :
-		  value(v), left(NULL), right(NULL)
-		{
+		  value(v), left(NULL), right(NULL) {
 		}
 		
 		//! Copy Constructor
 		BSTNode(const BSTNode & other) : 
-		  value(other.value),left(other.left),right(other.right)
-		{
+		  value(other.value),left(other.left),right(other.right) {
 		}
 		
 	
 		//!  Read-only public methods for use by clients of the BST class
-		const Type & GetValue() const
-		{
+		const Type & GetValue() const {
 		  return value;
 		}
 	
 		
 	
-		BSTNode * GetLeft()const
-		{
+		BSTNode * GetLeft()const {
 		  return left;
 		}
 	
 	
-		BSTNode * GetRight()const
-		{
+		BSTNode * GetRight()const {
 		  return right;
 		}
 		
 		//! Assignment operator 
-		BSTNode & operator=(const BSTNode & other)
-		{
-			if(this!=&other)
-			{
+		BSTNode & operator=(const BSTNode & other) {
+			if(this!=&other) {
 				value=other.value;
 				left=other.left;
 				right=other.right;
@@ -70,8 +62,7 @@ class BSTNode
 
 //!  BST implements a binary search tree
 template<class Type>
-class BST 
-{
+class BST {
 	
 	public:
 	
