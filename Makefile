@@ -55,7 +55,7 @@ $(SRC_OBJ)/URL.o: $(SRC)/URL.cpp
 	g++ -o $(SRC_OBJ)/URL.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/URL.cpp
 
 $(SRC_OBJ)/testDriver.o: $(SRC)/testDriver.cpp
-	g++ -o $(SRC_OBJ)/testDriver.o $(CFLAGS) -I $(INCLUDE) $(SRC)/testDriver.cpp
+	g++ -o $(SRC_OBJ)/testDriver.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/testDriver.cpp
 
 $(LIBOBJ)/StringUtil.o: $(LIB_SRC)/StringUtil.cpp $(LIB_INCLUDE)/StringUtil.h
 	g++ -o $(LIBOBJ)/StringUtil.o $(CFLAGS) -I $(LIB_INCLUDE) $(LIB_SRC)/StringUtil.cpp

@@ -1,5 +1,7 @@
 #include <iostream>
+#include <string>
 #include "URL.h"
+#include "BST.h"
 using namespace std;
 
 int main (int argc, char* argv[]) {
@@ -7,6 +9,11 @@ int main (int argc, char* argv[]) {
   bool testResult = true;
 
   testResult = URL::Test(cout);
+  if (false == testResult) {
+    success = false;
+  }
+
+  testResult = BST<string>::Test(cout);
   if (false == testResult) {
     success = false;
   }
