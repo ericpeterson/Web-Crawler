@@ -51,13 +51,13 @@ lib/libcs240utils.a: $(LIBOBJ_FILES)
 $(SRC_OBJ)/helloMake.o: $(SRC)/helloMake.cpp
 	g++ -o $(SRC_OBJ)/helloMake.o $(CFLAGS) $(SRC)/helloMake.cpp
 
-$(SRC_OBJ)/URL.o: $(SRC)/URL.cpp
+$(SRC_OBJ)/URL.o: $(SRC)/URL.cpp $(INCLUDE)/URL.h $(LIB_INCLUDE)/UnitTest.h
 	g++ -o $(SRC_OBJ)/URL.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/URL.cpp
 
-$(SRC_OBJ)/Page.o: $(SRC)/Page.cpp
+$(SRC_OBJ)/Page.o: $(SRC)/Page.cpp $(INCLUDE)/URL.h $(INCLUDE)/Page.h $(INCLUDE)/URL.h
 	g++ -o $(SRC_OBJ)/Page.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/Page.cpp
 
-$(SRC_OBJ)/testDriver.o: $(SRC)/testDriver.cpp
+$(SRC_OBJ)/testDriver.o: $(SRC)/testDriver.cpp $(INCLUDE)/* $(LIB_INCLUDE)/UnitTest.h
 	g++ -o $(SRC_OBJ)/testDriver.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/testDriver.cpp
 
 $(LIBOBJ)/StringUtil.o: $(LIB_SRC)/StringUtil.cpp $(LIB_INCLUDE)/StringUtil.h

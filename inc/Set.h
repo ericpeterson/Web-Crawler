@@ -36,6 +36,7 @@ bool Set<Key>::Test (ostream & os) {
 
   Set<Key> set;
   TEST(set.IsEmpty() == true);
+  TEST(set.GetRoot() == NULL);
 
   return success;
 }
