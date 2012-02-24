@@ -95,18 +95,11 @@ class URL {
     */
     string pageName;
 
+    // The prefix concatenated with the pageName
+    string fullURL;
+
     // A leftover global variable from the original url resolver code
     char* relativePtr;
-
-
-    /**
-     *  Combine prefix and page name for a complete url
-     *
-     *  @param The url prefix
-     *  @param The url pageName
-     *  @return The complete url 
-     */  
-    string createAbsoluteURL (string prefix, string pageName) const;
 
 
     /**
@@ -122,7 +115,7 @@ class URL {
      *
      *  @param OUT urlPageName The page name of url.
      */
-    void parseURL (string url, string & urlPrefix, string & urlPageName) const;
+    void parseURL (const string & url, string & urlPrefix, string & urlPageName) const;
 
 
     /**
@@ -194,7 +187,7 @@ class URL {
      *
      *  @return true if the minimum requirements are met; false otherwise
      */
-    bool checkIfValid (string url);
+    bool checkIfValid (string url) const;
 
 
     /**

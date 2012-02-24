@@ -71,7 +71,7 @@ bool Page::Test (ostream & os) {
   TEST(pageDefault.url.getPrefix() == pageWithDescription.url.getPrefix());
   TEST(pageDefault.url.getPageName() == pageWithDescription.url.getPageName());
 
-  TEST((baseURL2 < baseURL) == false); 
+  TEST((pageOverloaded < pageWithDescription) == true); 
 
   return success; 
 }

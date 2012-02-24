@@ -10,7 +10,8 @@ typedef size_t Index;
 
 URL::URL () : 
     prefix("")
-  , pageName("") {}
+  , pageName("") 
+  , fullURL("") {}
 
 
 URL::URL (string absoluteURL) {
@@ -26,6 +27,7 @@ URL::URL (string absoluteURL) {
 
   this->prefix = urlPrefix;
   this->pageName = urlPageName;
+  this->fullURL = absoluteURL;
 }
 
 
@@ -60,6 +62,7 @@ URL::URL (string url, string baseURL) {
 
   this->prefix = urlPrefix;
   this->pageName = urlPageName;
+  this->fullURL = resolvedURL;
 }
 
 
@@ -77,6 +80,11 @@ URL & URL::operator = (const URL & uCopy) {
 }
 
 
+string URL::getFullURL () const {
+  return this->fullURL;
+}
+
+
 string URL::getPrefix () const {
   return this->prefix;
 }
@@ -87,30 +95,7 @@ string URL::getPageName () const {
 }
 
 
-string URL::createAbsoluteURL (string prefix, string pageName) const {
-  // if the page name is an empty string, return prefix as the absolute url
-  if (pageName.empty()) {
-    return prefix; 
-  }
-
-  string modifiedPrefix = prefix;
-
-  // if prefix does not end with a '/', then add '/' to the prefix
-  if ('/' != prefix.at(prefix.length() - 1)) {
-    modifiedPrefix.append(1, '/');
-  }
-
-  // concatenate the prefix and the page name
-  return modifiedPrefix.append(pageName);
-}
-
-
-string URL::getFullURL () const {
-  return createAbsoluteURL(this->prefix, this->pageName);
-}
-
-
-bool URL::checkIfValid (string url) {
+bool URL::checkIfValid (string url) const {
   string scheme;
   Index start = 0;
   Index schemeLength = 7;
@@ -293,7 +278,7 @@ bool URL::Test (ostream & os) {
 
 
 
-void URL::parseURL (string url, string & urlPrefix, string & urlPageName) const {
+void URL::parseURL (const string & url, string & urlPrefix, string & urlPageName) const {
     char forwardSlash = '/';
     Index lastSlashPosition;
     Index lastSlashPositionPlusOne;
