@@ -136,10 +136,13 @@ class BST {
 		//!
 		//!  @return true if v was removed from the tree, or false if v was not in the tree
 		//bool Remove(const Type & v);
-	
-	private:
+
+
+  protected:
     BSTNode<Type>* root; //!< The root node of this BST
     int size;      //!< The size of this BST
+	
+	private:
 
     //! Creates a deep copy of this BST. Use with copy constructor and
     //! assignment operator.

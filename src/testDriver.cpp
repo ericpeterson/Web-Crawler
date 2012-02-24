@@ -4,6 +4,7 @@
 #include "LinkedList.h"
 #include "BST.h"
 #include "Page.h"
+#include "Set.h"
 using namespace std;
 
 int main (int argc, char* argv[]) {
@@ -26,6 +27,11 @@ int main (int argc, char* argv[]) {
   }
 
   testResult = Page::Test(cout);
+  if (false == testResult) {
+    success = false;
+  }
+
+  testResult = Set<int>::Test(cout);
   if (false == testResult) {
     success = false;
   }
