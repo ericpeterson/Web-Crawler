@@ -10,11 +10,10 @@ typedef size_t Index;
 
 URL::URL () : 
     prefix("")
-  , pageName("")
-  , description("") {}
+  , pageName("") {}
 
 
-URL::URL (string absoluteURL) : description("") {
+URL::URL (string absoluteURL) {
   string urlPrefix = "";
   string urlPageName = "";
 
@@ -30,7 +29,7 @@ URL::URL (string absoluteURL) : description("") {
 }
 
 
-URL::URL (string url, string baseURL) : description("") {
+URL::URL (string url, string baseURL) {
   string resolvedURL(url);
   string urlPrefix;
   string urlPageName;
@@ -75,6 +74,39 @@ URL::URL (const URL & uCopy) {
 URL & URL::operator = (const URL & uCopy) {
   free();
   return copy(uCopy);
+}
+
+
+string URL::getPrefix () const {
+  return this->prefix;
+}
+
+
+string URL::getPageName () const {
+  return this->pageName;
+}
+
+
+string URL::createAbsoluteURL (string prefix, string pageName) const {
+  // if the page name is an empty string, return prefix as the absolute url
+  if (pageName.empty()) {
+    return prefix; 
+  }
+
+  string modifiedPrefix = prefix;
+
+  // if prefix does not end with a '/', then add '/' to the prefix
+  if ('/' != prefix.at(prefix.length() - 1)) {
+    modifiedPrefix.append(1, '/');
+  }
+
+  // concatenate the prefix and the page name
+  return modifiedPrefix.append(pageName);
+}
+
+
+string URL::getFullURL () const {
+  return createAbsoluteURL(this->prefix, this->pageName);
 }
 
 
@@ -238,40 +270,27 @@ bool URL::Test (ostream & os) {
   URL startURLConstructor(startURL);
   TEST(startURLConstructor.prefix == "file:///home/eric/myWebPages/");
   TEST(startURLConstructor.pageName == "coolEric.html");
-  TEST(startURLConstructor.description == "");
 
   URL url2("file://");
   TEST(url2.prefix == "file://");
   TEST(url2.pageName == "");
-  TEST(url2.description == "");
-
-  // setDescription() function
-  startURLConstructor.setDescription("This is a cool description");
-  TEST(startURLConstructor.description == "This is a cool description");
 
   // Two arg constructor
   URL urlOverloadedConstructor(relativeURL, startURL);
   TEST(urlOverloadedConstructor.prefix == "file:///home/natalie/herWebPages/");
   TEST(urlOverloadedConstructor.pageName == "nattles.html");
-  TEST(urlOverloadedConstructor.description == "");
 
   // Assignment operator - addresses shouldn't match but values should
-  urlOverloadedConstructor.setDescription("Yeuaepoij#aqa3!");
   startURLConstructor = urlOverloadedConstructor;
   TEST((&(urlOverloadedConstructor.prefix)) != (&(startURLConstructor.prefix)));
   TEST((&(urlOverloadedConstructor.pageName)) != (&(startURLConstructor.pageName)));
-  TEST((&(urlOverloadedConstructor.description)) != (&(startURLConstructor.description)));
   TEST(urlOverloadedConstructor.prefix == startURLConstructor.prefix);
   TEST(urlOverloadedConstructor.pageName == startURLConstructor.pageName);
-  TEST(urlOverloadedConstructor.description == startURLConstructor.description);
 
   return success;
 }
 
 
-void URL::setDescription (string urlDescription) {
-  this->description = urlDescription;
-}
 
 
 void URL::parseURL (string url, string & urlPrefix, string & urlPageName) const {
@@ -309,7 +328,6 @@ URL & URL::copy (const URL & uCopy) {
   if (this != &uCopy) {
     this->prefix = uCopy.prefix;
     this->pageName = uCopy.pageName;
-    this->description = uCopy.description;
   }
 
   return *this;

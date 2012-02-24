@@ -3,8 +3,8 @@
 
 #include <string>
 #include "URLInputStream.h"
-#include "WordIndex"
-#include "LinksList"
+#include "WordIndex.h"
+#include "LinksList.h"
 
 typedef string Description;
 

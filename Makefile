@@ -11,7 +11,7 @@ LIBOBJ_FILES = $(LIBOBJ)/StringUtil.o $(LIBOBJ)/URLInputStream.o \
   $(LIBOBJ)/HTMLTokenizer.o
 
 SRC_OBJ = obj
-SRC_OBJ_FILES = $(SRC_OBJ)/URL.o
+SRC_OBJ_FILES = $(SRC_OBJ)/URL.o $(SRC_OBJ)/Page.o
 
 SRC = src
 INCLUDE = inc
@@ -53,6 +53,9 @@ $(SRC_OBJ)/helloMake.o: $(SRC)/helloMake.cpp
 
 $(SRC_OBJ)/URL.o: $(SRC)/URL.cpp
 	g++ -o $(SRC_OBJ)/URL.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/URL.cpp
+
+$(SRC_OBJ)/Page.o: $(SRC)/Page.cpp
+	g++ -o $(SRC_OBJ)/Page.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/Page.cpp
 
 $(SRC_OBJ)/testDriver.o: $(SRC)/testDriver.cpp
 	g++ -o $(SRC_OBJ)/testDriver.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/testDriver.cpp

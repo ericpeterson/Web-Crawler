@@ -3,6 +3,7 @@
 #include "URL.h"
 #include "LinkedList.h"
 #include "BST.h"
+#include "Page.h"
 using namespace std;
 
 int main (int argc, char* argv[]) {
@@ -20,6 +21,11 @@ int main (int argc, char* argv[]) {
   }
 
   testResult = LinkedList<string>::Test(cout);
+  if (false == testResult) {
+    success = false;
+  }
+
+  testResult = Page::Test(cout);
   if (false == testResult) {
     success = false;
   }

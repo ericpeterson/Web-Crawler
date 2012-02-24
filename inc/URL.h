@@ -67,6 +67,12 @@ class URL {
     URL & operator = (const URL & uCopy);
 
 
+    // getter methods
+    string getPrefix () const;
+    string getPageName () const;
+    string getFullURL () const;
+
+
     /**
      *  Tests the methods of this class. This automated testing will help in
      *  regression testing.
@@ -76,9 +82,6 @@ class URL {
      *  @return true if all tests pass; false otherwise.
      */
     static bool Test (ostream & os);
-
-
-    void setDescription (string urlDescription);
 
 
   private:
@@ -92,11 +95,18 @@ class URL {
     */
     string pageName;
 
-    // The URL page's description that will be used in XML output
-    string description;
-    
     // A leftover global variable from the original url resolver code
     char* relativePtr;
+
+
+    /**
+     *  Combine prefix and page name for a complete url
+     *
+     *  @param The url prefix
+     *  @param The url pageName
+     *  @return The complete url 
+     */  
+    string createAbsoluteURL (string prefix, string pageName) const;
 
 
     /**
