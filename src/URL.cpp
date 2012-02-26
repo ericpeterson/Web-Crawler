@@ -51,7 +51,17 @@ URL::URL (string url, string baseURL) {
   if ((false == urlIsValid) && (true == baseURLIsValid)) {
     char* relativeURLCstring = (char*)url.c_str();
     char* baseURLCstring = (char*)baseURL.c_str();
-    resolvedURL = this->resolve(baseURLCstring, relativeURLCstring);
+
+    // Added this temp variable in to clean up a memory leak from the old url
+    // resolver code
+    char* tmpResolvedURL = this->resolve(baseURLCstring, relativeURLCstring);
+    const int MAX_RESOLVED_LENGTH = 2048;
+    char resolvedURLStr[MAX_RESOLVED_LENGTH] = {0};
+    strcpy(resolvedURLStr, tmpResolvedURL);
+    delete[] tmpResolvedURL;
+    tmpResolvedURL = NULL;
+
+    resolvedURL = resolvedURLStr;
   } else if ((false == urlIsValid) && (false == baseURLIsValid)) {
     resolvedURL = "";
   } else {
@@ -153,11 +163,11 @@ char* URL::calculateBasePtr (int baseLength, char* basePtr) {
 }
 
 
-char* URL::doSlashCase (int absoluteURLLength, const char* baseURL) {
-    char* absoluteTmp = new char[absoluteURLLength];
+char* URL::doSlashCase (int baseLength, const char* baseURL) {
+    char* absoluteTmp = new char[baseLength];
     int counter = 0;
     
-    for (int i=0; i<absoluteURLLength; i++) {
+    for (int i=0; i<baseLength; i++) {
         absoluteTmp[i] = baseURL[i];
         if ('/' == baseURL[i]) {
             counter++;
@@ -200,46 +210,51 @@ char* URL::resolve (char* baseURL, char* relativeURL) {
   int relativeLength = strlen(relativeURL);
   int absoluteURLLength = baseLength + relativeLength + 1;
   char* absoluteURL = new char[absoluteURLLength];
-  char* absoluteTmp;
+  char* absoluteTmp = NULL;
   int counter = 0;
   char* basePtr = const_cast<char*>(baseURL);
-  char forwardSlash = '/';
+  char* forwardSlash = "/";
+
+  for (counter = 0; counter < absoluteURLLength; counter++) {
+    absoluteURL[counter] = '\0';
+  }
+  counter = 0;
 
   this->relativePtr = const_cast<char*>(relativeURL);
 
   switch (*relativeURL) {
       case '/':
-          absoluteTmp = doSlashCase(absoluteURLLength, baseURL); 
-          strncpy(absoluteURL, absoluteTmp, strlen(absoluteTmp));
-          strncat(absoluteURL, relativeURL, relativeLength);
+          absoluteTmp = doSlashCase(baseLength, baseURL); 
+          strcpy(absoluteURL, absoluteTmp);
+          strcat(absoluteURL, relativeURL);
           delete[] absoluteTmp;
           absoluteTmp = NULL;
           break;
       case '.':
           basePtr = doDotCase(basePtr, baseLength, relativeLength);
-          while ((baseURL != basePtr) && (counter != absoluteURLLength)) {
+          while ((&baseURL[counter] != (basePtr+1)) && (counter != (absoluteURLLength - 1))) {
               absoluteURL[counter] = baseURL[counter];
               counter++;
           } 
 
-          strncat(absoluteURL, &forwardSlash, 1);
-          strncat(absoluteURL, this->relativePtr, relativeLength);
+          strcat(absoluteURL, forwardSlash);
+          strcat(absoluteURL, this->relativePtr);
           break;
       case '#':
-          strncpy(absoluteURL, baseURL, baseLength);
-          strncat(absoluteURL, relativeURL, relativeLength);
+          strcpy(absoluteURL, baseURL);
+          strcat(absoluteURL, relativeURL);
           break;
       default:
           basePtr = calculateBasePtr(baseLength, basePtr); 
 
           counter = 0;
-          while ((baseURL != basePtr) && (counter != absoluteURLLength)) {
+          while ((&baseURL[counter] != (basePtr+1)) && (counter != (absoluteURLLength-1))) {
               absoluteURL[counter] = baseURL[counter];
               counter++;
           }
 
-          strncat(absoluteURL, &forwardSlash, 1);
-          strncat(absoluteURL, this->relativePtr, relativeLength);
+          strcat(absoluteURL, forwardSlash);
+          strcat(absoluteURL, this->relativePtr);
   }
  
   return absoluteURL;

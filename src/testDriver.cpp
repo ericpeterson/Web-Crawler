@@ -36,6 +36,11 @@ int main (int argc, char* argv[]) {
     success = false;
   }
 
+  testResult = Set<string>::Test(cout);
+  if (false == testResult) {
+    success = false;
+  }
+
   testResult = Set<int>::Test(cout);
   if (false == testResult) {
     success = false;
