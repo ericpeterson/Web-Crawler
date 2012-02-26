@@ -2,6 +2,7 @@
 #define CS240_BST_H
 
 #include <iostream>
+#include <cassert>
 #include "UnitTest.h"
 using namespace std;
 
@@ -125,7 +126,18 @@ class BST {
 		//!
 		//!  @return a pointer to the node containing v, or NULL if v is not in the tree
 		BSTNode<Type> * Find(const Type & v) const;
+
 	
+		/**  
+		 *  Searches the tree for value v
+		 *  
+		 *  @param v The new value being searched for
+		 *  @param OUT previous The node that points to v, if it is in tree; NULL otherwise
+		 *
+		 *  @return a pointer to the node containing v, or NULL if v is not in the tree
+		 */
+		BSTNode<Type> * Find(const Type & v, BSTNode<Type>*& previous) const;
+
 	
 		//! @NOTE: YOU ARE NOT REQUIRED TO IMPLEMENT THE Remove METHOD BELOW
 		//!        (BUT YOU CAN IF YOU WANT TO)
@@ -135,7 +147,7 @@ class BST {
 		//!  @param v The value being removed from the tree
 		//!
 		//!  @return true if v was removed from the tree, or false if v was not in the tree
-		//bool Remove(const Type & v);
+		bool Remove(const Type & v);
 
 
   protected:
@@ -158,6 +170,27 @@ class BST {
     //!
     //! @return The pointer to the duplicated BSTNode
     BSTNode<Type>* recursiveCopy (BSTNode<Type>* node);
+
+
+    /**
+     *  Finds the in-order successor of a given node. This is the smallest
+     *  (left-most) child of the node's right sub-tree.
+     *
+     *  @param node The node whose successor we will find
+     *  @return A pointer to the successor node
+     */
+    BSTNode<Type>* getInOrderSuccessor (BSTNode<Type>* node);
+
+
+    /**
+     *  Finds the in-order predecessor of a given node. This is the largest
+     *  (right-most) child of the node's left sub-tree.
+     *
+     *  @param node The node whose predecessor we will find
+     *  @return A pointer to the predecessor node
+     */
+    BSTNode<Type>* getInOrderPredecessor (BSTNode<Type>* node);
+
 
     //! Deallocates object memory. Use with destructor and assignment operator.
     void freeBST (BSTNode<Type>* node);
@@ -187,6 +220,7 @@ BST<Type>& BST<Type>::operator = (const BST<Type> & other) {
   return copy(other);
 }
 
+
 template<class Type>
 bool BST<Type>::Test (ostream & os) {
   bool success = true;
@@ -198,6 +232,51 @@ bool BST<Type>::Test (ostream & os) {
 
   bst.Insert(myType);
   TEST(bst.GetSize() == 1);
+
+  return success;
+}
+
+
+template <>
+bool BST<int>::Test (ostream & os) {
+  bool success = true;
+
+  const int NUM_TESTS = 9;
+  int myType[NUM_TESTS] = {2, 3, 5, 4, 7, 15, 13, 12, 1};
+
+  BST<int> bst;
+  TEST(bst.IsEmpty() == true);
+
+  // populate the BST
+  for (int i = 0; i < NUM_TESTS; i += 1) {
+    bst.Insert(myType[i]);
+  }
+
+  TEST(bst.GetSize() == NUM_TESTS);
+
+  bst.Remove(12);
+  bst.Remove(15);
+  bst.Remove(7);
+  bst.Remove(2);
+  TEST(bst.GetSize() == (NUM_TESTS - 4));
+  TEST(bst.GetRoot()->GetValue() == 3);
+  TEST(bst.GetRoot()->GetLeft()->GetValue() == 1);
+  TEST(bst.GetRoot()->GetRight()->GetValue() == 4);
+  TEST(bst.GetRoot()->GetRight()->GetRight()->GetValue() == 5);
+  TEST(bst.GetRoot()->GetRight()->GetRight()->GetRight()->GetValue() == 13);
+
+  bst.Remove(5);
+  bst.Remove(4);
+  bst.Remove(13);
+  bst.Remove(1);
+  TEST(bst.GetSize() == (NUM_TESTS - 8));
+  TEST(bst.GetRoot()->GetValue() == 3);
+  TEST(bst.GetRoot()->GetLeft() == NULL);
+  TEST(bst.GetRoot()->GetRight() == NULL);
+
+  bst.Remove(3);
+  TEST(bst.IsEmpty() == true);
+  TEST(bst.GetRoot() == NULL);
 
   return success;
 }
@@ -262,6 +341,28 @@ BSTNode<Type> * BST<Type>::Insert(const Type & v) {
   return newNode;
 }
 
+
+template <class Type>
+BSTNode<Type> * BST<Type>::Find (const Type & v, BSTNode<Type>*& previous) const {
+  BSTNode<Type>* found = root;
+  previous = NULL;
+
+  while (NULL != found) {
+    if (v < found->value) {
+      previous = found;
+      found = found->left;
+    } else if (found->value < v) {
+      previous = found;
+      found = found->right;
+    } else {
+      break;
+    }
+  }
+ 
+  return found;
+}
+
+
 template<class Type>
 BSTNode<Type> * BST<Type>::Find(const Type & v) const {
   BSTNode<Type>* found = root;
@@ -278,8 +379,100 @@ BSTNode<Type> * BST<Type>::Find(const Type & v) const {
   return found;
 }
 
-//template<class Type>
-//bool BST::Remove(const Type & v) { size--; return true; }
+
+template <class Type>
+BSTNode<Type>* BST<Type>::getInOrderPredecessor (BSTNode<Type>* node) {
+  assert(NULL != node);
+  assert(NULL != node->left);
+
+  // get the left subtree first
+  BSTNode<Type>* current = node->left;
+
+  // find largest (right most) child
+  while (NULL != current->right) {
+    current = current->right;
+  }
+
+  return current;
+}
+
+
+template <class Type>
+BSTNode<Type>* BST<Type>::getInOrderSuccessor (BSTNode<Type>* node) {
+  assert(NULL != node);
+  assert(NULL != node->right);
+
+  // get the right subtree first
+  BSTNode<Type>* current = node->right;
+
+  // find smallest (left most) child
+  while (NULL != current->left) {
+    current = current->left;
+  }
+
+  return current;
+}
+
+
+// Remove algorithm found at http://en.wikipedia.org/wiki/Binary_search_tree
+template<class Type>
+bool BST<Type>::Remove(const Type & v) {
+  bool nodeWasRemoved = true;
+
+  BSTNode<Type> * previous = NULL;
+  BSTNode<Type> * currentNode = Find(v, previous);
+
+  if (NULL == currentNode) {
+    // v was not in the tree
+    nodeWasRemoved = false;
+
+  // if right sub-tree is not empty
+  } else if (NULL != currentNode->right) {
+    BSTNode<Type> * successor = getInOrderSuccessor(currentNode); 
+    
+    //   replace current node's value with in-order successor's value
+    Type predecessorValue = successor->value;
+
+    //   remove in-order successor node
+    bool successorWasRemoved = Remove(successor->value);
+    assert(true == successorWasRemoved);
+    
+    currentNode->value = predecessorValue;
+
+  // else if left sub-tree is not empty
+  } else if (NULL != currentNode->left) {
+    BSTNode<Type> * predecessor = getInOrderPredecessor(currentNode);
+
+    //   replace current node's value with in-order predecessor's value
+    Type predecessorValue = predecessor->value;
+
+    //   remove in-order predecessor
+    bool predecessorWasRemoved = Remove(predecessor->value);
+    assert(true == predecessorWasRemoved);
+    
+    currentNode->value = predecessorValue;
+
+  //   remove current node
+  } else {
+    // previous is only null if currentNode is root
+    if (NULL == previous) {
+      Clear();
+    } else if (previous->left == currentNode) {
+      delete currentNode;
+      currentNode = NULL;
+      previous->left = NULL;
+      this->size--;
+    } else {
+      delete currentNode;
+      currentNode = NULL;
+      previous->right = NULL;
+      this->size--;
+    }
+  }
+
+  return nodeWasRemoved;
+}
+
 
 template<class Type>
 BST<Type>& BST<Type>::copy (const BST<Type> & bstCopy) {

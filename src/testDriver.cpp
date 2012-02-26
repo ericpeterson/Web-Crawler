@@ -21,6 +21,11 @@ int main (int argc, char* argv[]) {
     success = false;
   }
 
+  testResult = BST<int>::Test(cout);
+  if (false == testResult) {
+    success = false;
+  }
+
   testResult = LinkedList<string>::Test(cout);
   if (false == testResult) {
     success = false;
