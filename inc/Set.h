@@ -18,6 +18,27 @@ class Set : public BST<Key> {
 
 
     /**
+     *  Copy constructor
+     *
+     *  @param sCopy A reference to the Set object to be copied
+     */
+    Set (const Set & sCopy);
+
+
+    // Destructor
+    ~Set ();
+
+
+    /**
+     *  Overloaded assignment operator
+     *
+     *  @param sCopy The Set object to be copied
+     *  @return A reference to this Set object
+     */
+    Set & operator = (const Set & sCopy);
+
+
+    /**
      *  Inserts a value v into the Set. Duplicates are not allowed.
      *
      *  @param v The new value being inserted
@@ -52,6 +73,22 @@ class Set : public BST<Key> {
      */
     static bool Test (ostream & os);
 
+  protected:
+
+    /**
+     *  Makes a deep copy of a Set object
+     *
+     *  @param sCopy The Set object to be copied
+     */
+    Set & copy (const Set & sCopy);
+
+
+    /**
+     *  Deallocates any heap memory used by this Set object
+     */
+    void free ();
+
+
   private:
 
     /**
@@ -59,11 +96,32 @@ class Set : public BST<Key> {
      *  a log(N) lookup time.
      */
     void balanceTree ();
+
+
 };
 
 
 template <class Key>
 Set<Key>::Set() : BST<Key>::BST() {}
+
+
+template <class Key>
+Set<Key>::Set (const Set<Key> & sCopy) {
+  copy(sCopy);
+}
+
+
+template <class Key>
+Set<Key> & Set<Key>::operator = (const Set<Key> & sCopy) {
+  free();
+  return copy(sCopy);
+}
+
+
+template <class Key>
+Set<Key>::~Set() {
+  free();
+}
 
 
 template <class Key>
@@ -158,5 +216,16 @@ void Set<Key>::balanceTree () {
   // TODO: implement a balanced tree if performance is unacceptable
 }
 
+
+template <class Key>
+Set<Key> & Set<Key>::copy (const Set<Key> & sCopy) {
+  BST<Key>::copy(sCopy);
+}
+
+
+template <class Key>
+void Set<Key>::free () {
+  BST<Key>::free();
+}
 
 #endif

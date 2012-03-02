@@ -153,8 +153,11 @@ class BST {
   protected:
     BSTNode<Type>* root; //!< The root node of this BST
     int size;      //!< The size of this BST
-	
-	private:
+
+
+    // Deallocates heap memory used by this BST object
+    void free ();
+
 
     //! Creates a deep copy of this BST. Use with copy constructor and
     //! assignment operator.
@@ -163,6 +166,8 @@ class BST {
     //!
     //! @return A reference to this BST. 
     BST& copy (const BST & bstCopy);
+	
+	private:
 
     //! Recursive method for deep copy method.
     //!
@@ -208,14 +213,12 @@ BST<Type>::BST(const BST<Type> & other) {
 
 template<class Type>
 BST<Type>::~BST() {
-  freeBST(root);
-  root = NULL;
+  free();
 }
 
 template<class Type>
 BST<Type>& BST<Type>::operator = (const BST<Type> & other) {
-  freeBST(root);
-  root = NULL;
+  free();
   size = 0;  
   return copy(other);
 }
@@ -294,8 +297,7 @@ bool BST<Type>::IsEmpty() const {
 
 template<class Type>
 void BST<Type>::Clear() {
-  freeBST(root);
-  root = NULL;
+  free();
   size = 0;
 }
 
@@ -510,6 +512,13 @@ void BST<Type>::freeBST (BSTNode<Type>* node) {
 
   // freeBST node
   delete node;
+}
+
+
+template <class Type>
+void BST<Type>::free () {
+  freeBST(root);
+  root = NULL;
 }
 
 #endif
