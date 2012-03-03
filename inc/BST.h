@@ -12,142 +12,142 @@ class BST;
 //!  BSTNode implements a binary search tree node
 template<class Type>
 class BSTNode {
-		friend class BST<Type>;   //!< BST can access private members of BSTNode
-	
-	public:
-		//!  Constructor
-		BSTNode(const Type & v) :
-		  value(v), left(NULL), right(NULL) {
-		}
-		
-		//! Copy Constructor
-		BSTNode(const BSTNode & other) : 
-		  value(other.value),left(other.left),right(other.right) {
-		}
-		
-	
-		//!  Read-only public methods for use by clients of the BST class
-		const Type & GetValue() const {
-		  return value;
-		}
-	
-		
-	
-		BSTNode * GetLeft()const {
-		  return left;
-		}
-	
-	
-		BSTNode * GetRight()const {
-		  return right;
-		}
-		
-		//! Assignment operator 
-		BSTNode & operator=(const BSTNode & other) {
-			if(this!=&other) {
-				value=other.value;
-				left=other.left;
-				right=other.right;
-			}
-			
-			return *this;
-		}
+  friend class BST<Type>;   //!< BST can access private members of BSTNode
+  
+  public:
+    //!  Constructor
+    BSTNode(const Type & v) :
+      value(v), left(NULL), right(NULL) {
+    }
+    
+    //! Copy Constructor
+    BSTNode(const BSTNode & other) : 
+      value(other.value),left(other.left),right(other.right) {
+    }
+    
+
+    //!  Read-only public methods for use by clients of the BST class
+    const Type & GetValue() const {
+      return value;
+    }
+
+    
+
+    BSTNode * GetLeft()const {
+      return left;
+    }
+
+
+    BSTNode * GetRight()const {
+      return right;
+    }
+      
+    //! Assignment operator 
+    BSTNode & operator=(const BSTNode & other) {
+      if(this!=&other) {
+        value=other.value;
+        left=other.left;
+        right=other.right;
+      }
+          
+      return *this;
+    }
 
 	
-	private:
-		Type value;  //!< value stored in the node
-		BSTNode * left;     //!< pointer to the node's left child
-		BSTNode * right;    //!< pointer to the node's right child
+    private:
+      Type value;  //!< value stored in the node
+      BSTNode * left;     //!< pointer to the node's left child
+      BSTNode * right;    //!< pointer to the node's right child
 };
 
 
 //!  BST implements a binary search tree
 template<class Type>
 class BST {
-	
-	public:
-	
-		//!  No-arg constructor.  Initializes an empty BST
-		BST();
-	
-	
-		//!  Copy constructor.  Makes a complete copy of its argument
-		BST(const BST & other);
-	
-	
-		//!  Destructor
-		~BST();
-	
-	
-		//!  Assignment operator.  Makes a complete copy of its argument
-		//!  @return Reference to oneself
-		BST& operator =(const BST & other);
-	
+
+  public:
+
+    //!  No-arg constructor.  Initializes an empty BST
+    BST();
+
+
+    //!  Copy constructor.  Makes a complete copy of its argument
+    BST(const BST & other);
+
+
+    //!  Destructor
+    ~BST();
+
+
+    //!  Assignment operator.  Makes a complete copy of its argument
+    //!  @return Reference to oneself
+    BST& operator =(const BST & other);
+
 
     /**
-     *  Unit test for this class
-     *  
-     *  @param os The output stream to write test results
-     *
-     *  @return true if all tests passed; false otherwise
-     */
+    *  Unit test for this class
+    *  
+    *  @param os The output stream to write test results
+    *
+    *  @return true if all tests passed; false otherwise
+    */
     static bool Test (ostream & os);
 
-	
-		//!  @return a pointer to the root node of the tree, or NULL if the tree is empty.
-		//!  @note This is useful for BST clients that need to traverse the tree.)
-		BSTNode<Type> * GetRoot()const;
-	
-	
-		//!  @return true if the BST is empty, or false if the BST is not empty
-		bool IsEmpty() const;
-	
-	
-		//!  Removes all values from the BST
-		void Clear();
-	
-	
-		//!  @return the number of values in the BST
-		int GetSize() const;
-	
-	
-		//!  Inserts value v into the BST
-		//!  
-		//!  @param v The new value being inserted
-		//!
-		//!  @return a pointer to the newly inserted node, or NULL if v was already
-		//!          in the tree (i.e., NULL is used to indicate a duplicate insertion)
-		BSTNode<Type> * Insert(const Type & v);
-	
-	
-		//!  Searches the tree for value v
-		//!  
-		//!  @param v The new value being searched for
-		//!
-		//!  @return a pointer to the node containing v, or NULL if v is not in the tree
-		BSTNode<Type> * Find(const Type & v) const;
 
-	
-		/**  
-		 *  Searches the tree for value v
-		 *  
-		 *  @param v The new value being searched for
-		 *  @param OUT previous The node that points to v, if it is in tree; NULL otherwise
-		 *
-		 *  @return a pointer to the node containing v, or NULL if v is not in the tree
-		 */
-		BSTNode<Type> * Find(const Type & v, BSTNode<Type>*& previous) const;
+    //!  @return a pointer to the root node of the tree, or NULL if the tree is empty.
+    //!  @note This is useful for BST clients that need to traverse the tree.)
+    BSTNode<Type> * GetRoot()const;
 
-	
-		//! @NOTE: YOU ARE NOT REQUIRED TO IMPLEMENT THE Remove METHOD BELOW
-		//!        (BUT YOU CAN IF YOU WANT TO)
-		//!
-		//!  Removes value v from the tree
-		//!  
-		//!  @param v The value being removed from the tree
-		//!
-		//!  @return true if v was removed from the tree, or false if v was not in the tree
-		bool Remove(const Type & v);
+
+    //!  @return true if the BST is empty, or false if the BST is not empty
+    bool IsEmpty() const;
+
+
+    //!  Removes all values from the BST
+    void Clear();
+
+
+    //!  @return the number of values in the BST
+    int GetSize() const;
+
+
+    //!  Inserts value v into the BST
+    //!  
+    //!  @param v The new value being inserted
+    //!
+    //!  @return a pointer to the newly inserted node, or NULL if v was already
+    //!          in the tree (i.e., NULL is used to indicate a duplicate insertion)
+    BSTNode<Type> * Insert(const Type & v);
+
+
+    //!  Searches the tree for value v
+    //!  
+    //!  @param v The new value being searched for
+    //!
+    //!  @return a pointer to the node containing v, or NULL if v is not in the tree
+    BSTNode<Type> * Find(const Type & v) const;
+
+
+    /**  
+    *  Searches the tree for value v
+    *  
+    *  @param v The new value being searched for
+    *  @param OUT previous The node that points to v, if it is in tree; NULL otherwise
+    *
+    *  @return a pointer to the node containing v, or NULL if v is not in the tree
+    */
+    BSTNode<Type> * Find(const Type & v, BSTNode<Type>*& previous) const;
+
+
+    //! @NOTE: YOU ARE NOT REQUIRED TO IMPLEMENT THE Remove METHOD BELOW
+    //!        (BUT YOU CAN IF YOU WANT TO)
+    //!
+    //!  Removes value v from the tree
+    //!  
+    //!  @param v The value being removed from the tree
+    //!
+    //!  @return true if v was removed from the tree, or false if v was not in the tree
+    bool Remove(const Type & v);
 
 
   protected:
@@ -166,8 +166,8 @@ class BST {
     //!
     //! @return A reference to this BST. 
     BST& copy (const BST & bstCopy);
-	
-	private:
+
+  private:
 
     //! Recursive method for deep copy method.
     //!
@@ -178,22 +178,22 @@ class BST {
 
 
     /**
-     *  Finds the in-order successor of a given node. This is the smallest
-     *  (left-most) child of the node's right sub-tree.
-     *
-     *  @param node The node whose successor we will find
-     *  @return A pointer to the successor node
-     */
+    *  Finds the in-order successor of a given node. This is the smallest
+    *  (left-most) child of the node's right sub-tree.
+    *
+    *  @param node The node whose successor we will find
+    *  @return A pointer to the successor node
+    */
     BSTNode<Type>* getInOrderSuccessor (BSTNode<Type>* node);
 
 
     /**
-     *  Finds the in-order predecessor of a given node. This is the largest
-     *  (right-most) child of the node's left sub-tree.
-     *
-     *  @param node The node whose predecessor we will find
-     *  @return A pointer to the predecessor node
-     */
+    *  Finds the in-order predecessor of a given node. This is the largest
+    *  (right-most) child of the node's left sub-tree.
+    *
+    *  @param node The node whose predecessor we will find
+    *  @return A pointer to the predecessor node
+    */
     BSTNode<Type>* getInOrderPredecessor (BSTNode<Type>* node);
 
 

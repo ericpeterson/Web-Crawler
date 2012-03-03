@@ -143,6 +143,7 @@ bool Set<int>::Test (ostream & os) {
   int testValues[NUM_VALUES] = {15, 22, 42, 1, 7, 4, 13, 19, 21, 5};
 
   Set<int> set;
+  Set<int> set2 = set;
 
   for (int i = 0; i < NUM_VALUES; i += 1) {
     set.Insert(testValues[i]);
@@ -220,6 +221,7 @@ void Set<Key>::balanceTree () {
 template <class Key>
 Set<Key> & Set<Key>::copy (const Set<Key> & sCopy) {
   BST<Key>::copy(sCopy);
+  return *this;
 }
 
 

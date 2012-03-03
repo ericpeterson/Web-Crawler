@@ -5,6 +5,7 @@
 #include "BST.h"
 #include "Page.h"
 #include "Set.h"
+#include "Map.h"
 using namespace std;
 
 int main (int argc, char* argv[]) {
@@ -42,6 +43,11 @@ int main (int argc, char* argv[]) {
   }
 
   testResult = Set<int>::Test(cout);
+  if (false == testResult) {
+    success = false;
+  }
+
+  testResult = Map<int, string>::Test(cout);
   if (false == testResult) {
     success = false;
   }
