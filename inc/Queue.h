@@ -64,15 +64,15 @@ class Queue : public LinkedList<Type> {
     /**
      *  Removes last value from the Queue
      *
-     *  @return A reference to the last value in Queue
+     *  @return The last value in Queue
      */
-    const Type pop ();
+    Type pop ();
 
 
     /**
      *  @return The number of elements in this Queue
      */
-    int size ();
+    int size () const;
 
 
     /**
@@ -80,7 +80,7 @@ class Queue : public LinkedList<Type> {
      *
      *  @return true if the Queue is empty; false otherwise
      */
-    bool empty ();
+    bool empty () const;
 
 
     /**
@@ -92,7 +92,7 @@ class Queue : public LinkedList<Type> {
      */
     static bool Test (ostream & os);
 
-  private:
+  protected:
 
     /**
      *  Makes a deep copy of this Queue
@@ -175,7 +175,7 @@ void Queue<Type>::push (const Type & value) {
 
 // pop () - GetLast() and Remove(LLNode*) LinkedList
 template <class Type>
-const Type Queue<Type>::pop () {
+Type Queue<Type>::pop () {
   LLNode<Type>* lastValue = LinkedList<Type>::GetLast();
   Type value;
 
@@ -191,20 +191,31 @@ const Type Queue<Type>::pop () {
 
 // size () - GetSize() LinkedList
 template <class Type>
-int Queue<Type>::size () {
+int Queue<Type>::size () const {
   return LinkedList<Type>::GetSize();
 }
 
 
 // empty () - IsEmpty() LinkedList
 template <class Type>
-bool Queue<Type>::empty () {
+bool Queue<Type>::empty () const {
   return LinkedList<Type>::IsEmpty();
 }
 
 
+template <class Type>
+bool Queue<Type>::Test (ostream & os) {
+  bool success = true;
+  Queue<Type> queue;
+
+  TEST(queue.empty() == true);
+
+  return success;
+}
+
+
 template <>
-bool Queue<string>::Test (ostream & os) {
+inline bool Queue<string>::Test (ostream & os) {
   bool success = true;
 
   Queue<string> queue;

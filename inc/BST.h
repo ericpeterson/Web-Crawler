@@ -241,7 +241,7 @@ bool BST<Type>::Test (ostream & os) {
 
 
 template <>
-bool BST<int>::Test (ostream & os) {
+inline bool BST<int>::Test (ostream & os) {
   bool success = true;
 
   const int NUM_TESTS = 9;

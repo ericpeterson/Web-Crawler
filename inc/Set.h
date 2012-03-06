@@ -137,7 +137,7 @@ bool Set<Key>::Test (ostream & os) {
 
 
 template <>
-bool Set<int>::Test (ostream & os) {
+inline bool Set<int>::Test (ostream & os) {
   bool success = true;
   const int NUM_VALUES = 10;
   int testValues[NUM_VALUES] = {15, 22, 42, 1, 7, 4, 13, 19, 21, 5};

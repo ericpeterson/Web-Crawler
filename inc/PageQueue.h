@@ -2,6 +2,7 @@
 #define _PAGE_QUEUE_H_
 
 #include "Page.h"
+#include "Queue.h"
 
 typedef int Size;
 
@@ -50,8 +51,15 @@ class PageQueue : Queue<Page> {
      *
      *  @return true if the size of this PageQueue is zero; false otherwise.
      */
-    bool isEmpty ();
+    bool isEmpty () const;
 
+
+    /**
+     *  Gets the size of this PageQueue
+     *
+     *  @return The number of elements in this PageQueue
+     */
+    Size getSize () const;
 
     /**
      *  Gets the next Page from the queue and removes it from the queue
@@ -66,7 +74,17 @@ class PageQueue : Queue<Page> {
      *
      *  @param newPage The new page to be added to the queue
      */
-    void enqueue (Page newPage);
+    void enqueue (const Page & newPage);
+
+
+    /**
+     *  Unit test for the PageQueue class
+     *
+     *  @param `os` A reference to the output stream where the test result will
+     *    be written
+     *  @return true if all tests pass; false otherwise. 
+     */
+    static bool Test (ostream & os);
 
     private:
 

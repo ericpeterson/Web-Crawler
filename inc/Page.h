@@ -48,6 +48,15 @@ class Page {
     Page & operator = (const Page & pageCopy);
 
 
+    /**
+     *  Overloaded does not equal operator
+     *  
+     *  @param `pageCopy` The Page object to be compared
+     *  @return true this Page does not equal pageCopy; false otherwise
+     */
+    bool operator != (const Page & pageCopy) const;
+
+
     // setter method
     void setDescription (string pageDescription);
 

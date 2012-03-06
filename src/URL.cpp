@@ -213,7 +213,7 @@ char* URL::resolve (char* baseURL, char* relativeURL) {
   char* absoluteTmp = NULL;
   int counter = 0;
   char* basePtr = const_cast<char*>(baseURL);
-  char* forwardSlash = "/";
+  char forwardSlash[2] = {'/', '\0'};
 
   for (counter = 0; counter < absoluteURLLength; counter++) {
     absoluteURL[counter] = '\0';

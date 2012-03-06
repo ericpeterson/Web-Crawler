@@ -7,6 +7,7 @@
 #include "Set.h"
 #include "Map.h"
 #include "Queue.h"
+#include "PageQueue.h"
 using namespace std;
 
 int main (int argc, char* argv[]) {
@@ -54,6 +55,11 @@ int main (int argc, char* argv[]) {
   }
 
   testResult = Queue<string>::Test(cout);
+  if (false == testResult) {
+    success = false;
+  }
+
+  testResult = PageQueue::Test(cout);
   if (false == testResult) {
     success = false;
   }

@@ -32,6 +32,14 @@ void Page::setDescription (string pageDescription) {
 }
 
 
+bool Page::operator != (const Page & pageCopy) const {
+  string thisURL = this->url.getFullURL();
+  string pageURL = pageCopy.url.getFullURL();
+
+  return thisURL != pageURL;
+}
+
+
 bool Page::operator < (const Page & page) const {
   // get the absolute url of both `this` and `page`
   string thisURL = this->url.getFullURL();

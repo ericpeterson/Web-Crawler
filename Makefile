@@ -1,7 +1,7 @@
 # Macros and existing pseudo-targets should not be modified.
 # There is a section to add new pseudo-targets commented below.
 
-CFLAGS = -c -g -Wall
+CFLAGS = -c -g -Wall -Werror
 LFLAGS = -L lib/ -l cs240utils
 
 LIBOBJ = utils/obj
@@ -11,7 +11,7 @@ LIBOBJ_FILES = $(LIBOBJ)/StringUtil.o $(LIBOBJ)/URLInputStream.o \
   $(LIBOBJ)/HTMLTokenizer.o
 
 SRC_OBJ = obj
-SRC_OBJ_FILES = $(SRC_OBJ)/URL.o $(SRC_OBJ)/Page.o
+SRC_OBJ_FILES = $(SRC_OBJ)/URL.o $(SRC_OBJ)/Page.o $(SRC_OBJ)/PageQueue.o
 
 SRC = src
 INCLUDE = inc
@@ -57,8 +57,11 @@ $(SRC_OBJ)/helloMake.o: $(SRC)/helloMake.cpp
 $(SRC_OBJ)/URL.o: $(SRC)/URL.cpp $(INCLUDE)/URL.h $(LIB_INCLUDE)/UnitTest.h
 	g++ -o $(SRC_OBJ)/URL.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/URL.cpp
 
-$(SRC_OBJ)/Page.o: $(SRC)/Page.cpp $(INCLUDE)/URL.h $(INCLUDE)/Page.h $(INCLUDE)/URL.h
+$(SRC_OBJ)/Page.o: $(SRC)/Page.cpp $(INCLUDE)/URL.h $(INCLUDE)/Page.h
 	g++ -o $(SRC_OBJ)/Page.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/Page.cpp
+
+$(SRC_OBJ)/PageQueue.o: $(SRC)/PageQueue.cpp $(INCLUDE)/*.h $(LIB_INCLUDE)/*.h
+	g++ -o $(SRC_OBJ)/PageQueue.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/PageQueue.cpp
 
 $(SRC_OBJ)/testDriver.o: $(SRC)/testDriver.cpp $(INCLUDE)/* $(LIB_INCLUDE)/UnitTest.h
 	g++ -o $(SRC_OBJ)/testDriver.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/testDriver.cpp
