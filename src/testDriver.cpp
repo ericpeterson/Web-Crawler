@@ -10,6 +10,8 @@
 #include "PageQueue.h"
 #include "PageSet.h"
 #include "StopWords.h"
+#include "WordIndex.h"
+#include "Occurrence.h"
 using namespace std;
 
 
@@ -65,6 +67,12 @@ int main (int argc, char* argv[]) {
   evaluateSuccess(testResult, success);
 
   testResult = StopWords::Test(cout);
+  evaluateSuccess(testResult, success);
+
+  testResult = Occurrence::Test(cout);
+  evaluateSuccess(testResult, success);
+
+  testResult = WordIndex::Test(cout);
   evaluateSuccess(testResult, success);
 
   if (true == success) {

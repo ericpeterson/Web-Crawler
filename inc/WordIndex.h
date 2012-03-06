@@ -1,7 +1,15 @@
 #ifndef _WORD_INDEX_H_
 #define _WORD_INDEX_H_
 
+#include <string>
+#include <iostream>
+#include "Map.h"
+#include "Set.h"
+#include "Occurrence.h"
+using namespace std;
+
 typedef string Word;
+typedef Set<Occurrence> OccurrenceSet;
 
 /**
  *  Data structure that maps words to web page occurrences
@@ -10,7 +18,7 @@ typedef string Word;
  *
  *    * Store index that maps words to pages
  */
-class WordIndex : Map<Word> {
+class WordIndex : Map<Word, OccurrenceSet> {
   public:
 
     /**
@@ -41,6 +49,16 @@ class WordIndex : Map<Word> {
      *  @return A reference to this WordIndex object
      */
     WordIndex & operator = (const WordIndex & wiCopy);
+
+
+    /**
+     *  Unit test for the WordIndex class
+     *
+     *  @param `os` A reference to the output stream where the test result will
+     *    be written
+     *  @return true if all tests pass; false otherwise. 
+     */
+    static bool Test (ostream & os);
 
   private:
 

@@ -69,7 +69,7 @@ class Map : public Set< MapNode<Key, Value> > {
     static bool Test(ostream & os);
 
 
-  private:
+  protected:
 
 
     /**

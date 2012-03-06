@@ -12,7 +12,8 @@ LIBOBJ_FILES = $(LIBOBJ)/StringUtil.o $(LIBOBJ)/URLInputStream.o \
 
 SRC_OBJ = obj
 SRC_OBJ_FILES = $(SRC_OBJ)/URL.o $(SRC_OBJ)/Page.o $(SRC_OBJ)/PageQueue.o \
-  $(SRC_OBJ)/PageSet.o $(SRC_OBJ)/StopWords.o
+  $(SRC_OBJ)/PageSet.o $(SRC_OBJ)/StopWords.o $(SRC_OBJ)/Occurrence.o \
+  $(SRC_OBJ)/WordIndex.o
 
 SRC = src
 INCLUDE = inc
@@ -69,6 +70,12 @@ $(SRC_OBJ)/PageSet.o: $(SRC)/PageSet.cpp $(INCLUDE)/*.h $(LIB_INCLUDE)/*.h
 
 $(SRC_OBJ)/StopWords.o: $(SRC)/StopWords.cpp $(INCLUDE)/*.h $(LIB_INCLUDE)/*.h
 	g++ -o $(SRC_OBJ)/StopWords.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/StopWords.cpp
+
+$(SRC_OBJ)/Occurrence.o: $(SRC)/Occurrence.cpp $(INCLUDE)/*.h $(LIB_INCLUDE)/*.h
+	g++ -o $(SRC_OBJ)/Occurrence.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/Occurrence.cpp
+
+$(SRC_OBJ)/WordIndex.o: $(SRC)/WordIndex.cpp $(INCLUDE)/*.h $(LIB_INCLUDE)/*.h
+	g++ -o $(SRC_OBJ)/WordIndex.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/WordIndex.cpp
 
 $(SRC_OBJ)/testDriver.o: $(SRC)/testDriver.cpp $(INCLUDE)/* $(LIB_INCLUDE)/UnitTest.h
 	g++ -o $(SRC_OBJ)/testDriver.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/testDriver.cpp
