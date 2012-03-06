@@ -28,7 +28,7 @@ clean:
 run-test:
 	bin/testdriver
 check-style:
-	~cs240ta/bin/CppCheckStyle/CppCheckStyle $(SRC)/*.cpp $(INCLUDE)/*.h $(LIB_INCLUDE)/*.h
+	~cs240ta/bin/CppCheckStyle/CppCheckStyle $(SRC)/*.cpp $(INCLUDE)/*.h
 valgrind: bin/testdriver
 	valgrind --tool=memcheck --leak-check=yes --max-stackframe=5000000 \
 	  --show-reachable=yes --suppressions=valgrind/string.supp bin/testdriver
