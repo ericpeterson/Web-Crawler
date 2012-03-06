@@ -11,7 +11,8 @@ LIBOBJ_FILES = $(LIBOBJ)/StringUtil.o $(LIBOBJ)/URLInputStream.o \
   $(LIBOBJ)/HTMLTokenizer.o
 
 SRC_OBJ = obj
-SRC_OBJ_FILES = $(SRC_OBJ)/URL.o $(SRC_OBJ)/Page.o $(SRC_OBJ)/PageQueue.o
+SRC_OBJ_FILES = $(SRC_OBJ)/URL.o $(SRC_OBJ)/Page.o $(SRC_OBJ)/PageQueue.o \
+  $(SRC_OBJ)/PageSet.o
 
 SRC = src
 INCLUDE = inc
@@ -62,6 +63,9 @@ $(SRC_OBJ)/Page.o: $(SRC)/Page.cpp $(INCLUDE)/URL.h $(INCLUDE)/Page.h
 
 $(SRC_OBJ)/PageQueue.o: $(SRC)/PageQueue.cpp $(INCLUDE)/*.h $(LIB_INCLUDE)/*.h
 	g++ -o $(SRC_OBJ)/PageQueue.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/PageQueue.cpp
+
+$(SRC_OBJ)/PageSet.o: $(SRC)/PageSet.cpp $(INCLUDE)/*.h $(LIB_INCLUDE)/*.h
+	g++ -o $(SRC_OBJ)/PageSet.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/PageSet.cpp
 
 $(SRC_OBJ)/testDriver.o: $(SRC)/testDriver.cpp $(INCLUDE)/* $(LIB_INCLUDE)/UnitTest.h
 	g++ -o $(SRC_OBJ)/testDriver.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/testDriver.cpp

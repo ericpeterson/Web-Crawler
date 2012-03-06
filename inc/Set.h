@@ -62,7 +62,7 @@ class Set : public BST<Key> {
      *  @param v The value to be checked
      *  @return true if the value is in the set; false otherwise
      */
-    bool Contains (const Key & v);
+    bool Contains (const Key & v) const;
 
 
     /**
@@ -200,7 +200,7 @@ bool Set<Key>::Remove (const Key & v) {
 
 
 template <class Key>
-bool Set<Key>::Contains (const Key & v) {
+bool Set<Key>::Contains (const Key & v) const {
   BSTNode<Key>* found = BST<Key>::Find(v);
   bool valueInSet = true;
 

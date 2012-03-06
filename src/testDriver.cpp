@@ -8,61 +8,60 @@
 #include "Map.h"
 #include "Queue.h"
 #include "PageQueue.h"
+#include "PageSet.h"
 using namespace std;
+
+
+/**
+ *  Determines if the tests are successful based on current test result
+ *
+ *  @param IN `result` The current test result
+ *  @param OUT `success` The success of the test. False if `result` is false;
+ *    otherwise it will keep its most recent value.
+ */
+inline void evaluateSuccess (bool result, bool & success) {
+  if (false == result) {
+    success = false;
+  }
+}
+
 
 int main (int argc, char* argv[]) {
   bool success = true;
   bool testResult = true;
 
   testResult = URL::Test(cout);
-  if (false == testResult) {
-    success = false;
-  }
+  evaluateSuccess(testResult, success);
 
   testResult = BST<string>::Test(cout);
-  if (false == testResult) {
-    success = false;
-  }
+  evaluateSuccess(testResult, success);
 
   testResult = BST<int>::Test(cout);
-  if (false == testResult) {
-    success = false;
-  }
+  evaluateSuccess(testResult, success);
 
   testResult = LinkedList<string>::Test(cout);
-  if (false == testResult) {
-    success = false;
-  }
+  evaluateSuccess(testResult, success);
 
   testResult = Page::Test(cout);
-  if (false == testResult) {
-    success = false;
-  }
+  evaluateSuccess(testResult, success);
 
   testResult = Set<string>::Test(cout);
-  if (false == testResult) {
-    success = false;
-  }
+  evaluateSuccess(testResult, success);
 
   testResult = Set<int>::Test(cout);
-  if (false == testResult) {
-    success = false;
-  }
+  evaluateSuccess(testResult, success);
 
   testResult = Map<int, string>::Test(cout);
-  if (false == testResult) {
-    success = false;
-  }
+  evaluateSuccess(testResult, success);
 
   testResult = Queue<string>::Test(cout);
-  if (false == testResult) {
-    success = false;
-  }
+  evaluateSuccess(testResult, success);
 
   testResult = PageQueue::Test(cout);
-  if (false == testResult) {
-    success = false;
-  }
+  evaluateSuccess(testResult, success);
+
+  testResult = PageSet::Test(cout);
+  evaluateSuccess(testResult, success);
 
   if (true == success) {
     cout << "All tests passed!" << endl;

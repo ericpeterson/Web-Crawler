@@ -1,7 +1,9 @@
 #ifndef _PAGE_SET_H_
 #define _PAGE_SET_H_
 
+#include <ostream>
 #include "Page.h"
+#include "Set.h"
 
 typedef int Size;
 
@@ -51,6 +53,15 @@ class PageSet : Set<Page> {
      *  @return true if set is empty; false otherwise
      */
     bool isEmpty();
+
+
+    /**
+     *  Unit test for this class
+     *
+     *  @param `os` A reference to the output stream where test results will be sent
+     *  @return true if all tests pass; false otherwise
+     */
+    static bool Test (ostream & os);
 
   private:
 

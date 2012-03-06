@@ -270,22 +270,27 @@ bool URL::Test (ostream & os) {
   URL startURLConstructor(startURL);
   TEST(startURLConstructor.prefix == "file:///home/eric/myWebPages/");
   TEST(startURLConstructor.pageName == "coolEric.html");
+  TEST(startURLConstructor.fullURL == "file:///home/eric/myWebPages/coolEric.html");
 
   URL url2("file://");
   TEST(url2.prefix == "file://");
   TEST(url2.pageName == "");
+  TEST(url2.fullURL == "file://");
 
   // Two arg constructor
   URL urlOverloadedConstructor(relativeURL, startURL);
   TEST(urlOverloadedConstructor.prefix == "file:///home/natalie/herWebPages/");
   TEST(urlOverloadedConstructor.pageName == "nattles.html");
+  TEST(urlOverloadedConstructor.fullURL == "file:///home/natalie/herWebPages/nattles.html");
 
   // Assignment operator - addresses shouldn't match but values should
   startURLConstructor = urlOverloadedConstructor;
   TEST((&(urlOverloadedConstructor.prefix)) != (&(startURLConstructor.prefix)));
   TEST((&(urlOverloadedConstructor.pageName)) != (&(startURLConstructor.pageName)));
+  TEST((&(urlOverloadedConstructor.fullURL)) != (&(startURLConstructor.fullURL)));
   TEST(urlOverloadedConstructor.prefix == startURLConstructor.prefix);
   TEST(urlOverloadedConstructor.pageName == startURLConstructor.pageName);
+  TEST(urlOverloadedConstructor.fullURL == startURLConstructor.fullURL);
 
   return success;
 }
@@ -328,6 +333,7 @@ URL & URL::copy (const URL & uCopy) {
   if (this != &uCopy) {
     this->prefix = uCopy.prefix;
     this->pageName = uCopy.pageName;
+    this->fullURL = uCopy.fullURL;    
   }
 
   return *this;
