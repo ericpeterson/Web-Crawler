@@ -1,6 +1,11 @@
 #ifndef _STOP_WORDS_H_
 #define _STOP_WORDS_H_
 
+#include <string>
+#include <iostream>
+#include "Set.h"
+using namespace std;
+
 typedef string Word;
 
 /**
@@ -10,7 +15,7 @@ typedef string Word;
  *
  *    * Load and store stop words
  */
-class StopWords : BST<Word> {
+class StopWords : Set<Word> {
   public:
 
     /**
@@ -41,6 +46,16 @@ class StopWords : BST<Word> {
      *  @return A reference to this StopWords object
      */
     StopWords & operator = (const StopWords & swCopy);
+
+
+    /**
+     *  Unit test for the StopWords class
+     *
+     *  @param `os` A reference to the output stream where the test result will
+     *    be written
+     *  @return true if all tests pass; false otherwise. 
+     */
+    static bool Test (ostream & os);
 
   private:
 

@@ -9,6 +9,7 @@
 #include "Queue.h"
 #include "PageQueue.h"
 #include "PageSet.h"
+#include "StopWords.h"
 using namespace std;
 
 
@@ -61,6 +62,9 @@ int main (int argc, char* argv[]) {
   evaluateSuccess(testResult, success);
 
   testResult = PageSet::Test(cout);
+  evaluateSuccess(testResult, success);
+
+  testResult = StopWords::Test(cout);
   evaluateSuccess(testResult, success);
 
   if (true == success) {
