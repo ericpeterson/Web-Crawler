@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Map.h"
 #include "Set.h"
+#include "URL.h"
 #include "Occurrence.h"
 using namespace std;
 
@@ -49,6 +50,15 @@ class WordIndex : Map<Word, OccurrenceSet> {
      *  @return A reference to this WordIndex object
      */
     WordIndex & operator = (const WordIndex & wiCopy);
+
+
+    /**
+     *  Inserts a new occurrence of a Word into the index
+     *
+     *  @param IN `word` The new word occurrence
+     *  @param IN `url` The web page on which `word` is found
+     */
+    void Insert (const Word & word, const URL & url);
 
 
     /**

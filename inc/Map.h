@@ -44,10 +44,10 @@ class Map : public Set< MapNode<Key, Value> > {
      *  Retrieves the value associated with a key
      *
      *  @param `key` The key whose value will be retrieved
-     *  @return The value associated with `key` if it is in the Map; NULL otherwise
+     *  @return The value associated with `key` if it is in the Map
      *  @throws CS240Exception if `key` is not in this Map
      */
-    Value GetValue (const Key & key) const;
+    Value & GetValue (const Key & key) const;
 
 
     /**
@@ -57,7 +57,16 @@ class Map : public Set< MapNode<Key, Value> > {
      *  @param `value` The value associated with `key`
      *  @return true if the key-value pair was inserted; false otherwise
      */
-    bool Insert (Key key, Value value);
+    bool Insert (const Key & key, const Value & value);
+
+
+    /**
+     *  Check if this Map contains a given Key
+     *
+     *  @param `key` The key to check
+     *  @return true if this Map contains `key`; false otherwise 
+     */
+    bool Contains (const Key & key) const;
 
 
     /**
@@ -122,9 +131,10 @@ void Map<Key, Value>::free () {
 
 
 template <class Key, class Value>
-Value Map<Key, Value>::GetValue (const Key & key) const {
+Value & Map<Key, Value>::GetValue (const Key & key) const {
   // Wrap `key` in a dummy MapNode object for input to Find()
-  MapNode<Key, Value> mapNode(key, "");
+  Value value;
+  MapNode<Key, Value> mapNode(key, value);
 
   BSTNode< MapNode<Key, Value> > * node = BST< MapNode<Key, Value> >::Find(mapNode);
 
@@ -133,7 +143,7 @@ Value Map<Key, Value>::GetValue (const Key & key) const {
     throw CS240Exception("Key was not in Map");
   }
 
-  return node->GetValue().value;
+  return (Value &)node->GetValue().value;
 }
 
 
@@ -230,10 +240,10 @@ class MapNode {
 
 
     // returns `key` of this MapNode
-    Key GetKey () const;
+    Key & GetKey () const;
 
     // return `value` of this MapNode
-    Value GetValue () const;
+    Value & GetValue () const;
 
   private:
 
@@ -280,21 +290,29 @@ bool MapNode<Key, Value>::operator < (const MapNode<Key, Value> & node) const {
 
 
 template <class Key, class Value>
-Key MapNode<Key, Value>::GetKey () const {
+Key & MapNode<Key, Value>::GetKey () const {
   return key;
 }
 
 
 template <class Key, class Value>
-Value MapNode<Key,Value>::GetValue () const {
-  return value;
+Value & MapNode<Key,Value>::GetValue () const {
+  return (Value &)value;
 }
 
 
 template <class Key, class Value>
-bool Map<Key, Value>::Insert (Key key, Value value) {
+bool Map<Key, Value>::Insert (const Key & key, const Value & value) {
   MapNode<Key, Value> node(key, value);
   return Set< MapNode<Key, Value> >::Insert(node);
+}
+
+
+template <class Key, class Value>
+bool Map<Key, Value>::Contains (const Key & key) const {
+  Value value;
+  MapNode<Key, Value> node(key, value);
+  return Set< MapNode<Key, Value> >::Contains(node);
 }
 
 

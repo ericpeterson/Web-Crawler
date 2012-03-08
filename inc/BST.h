@@ -27,8 +27,8 @@ class BSTNode {
     
 
     //!  Read-only public methods for use by clients of the BST class
-    const Type & GetValue() const {
-      return value;
+    Type & GetValue() const {
+      return (Type &)value;
     }
 
     

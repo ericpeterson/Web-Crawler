@@ -11,9 +11,9 @@ class Occurrence {
      *  Overloaded constructor
      *
      *  @param IN `site` The url in which a word is found
-     *  @param IN `occurrences` The number of times the word appeared. Defaults to 0.
+     *  @param IN `occurrences` The number of times the word appeared. Defaults to 1.
      */
-    Occurrence (URL site, int occurrences = 0);
+    Occurrence (URL site, int occurrences = 1);
 
 
     /**
@@ -35,6 +35,16 @@ class Occurrence {
      *  @return A reference to this Occurrence object
      */
     Occurrence & operator = (const Occurrence & oCopy); 
+
+
+    /**
+     *  Overloaded less than operator
+     *
+     *  @param `oCopy` The Occurrence to compare
+     *  @return true if this is less than `oCopy`; false otherwise. Comparison
+     *    is based on url.
+     */
+    bool operator < (const Occurrence & oCopy) const;
 
 
     // increments `count` by 1

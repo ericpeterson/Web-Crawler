@@ -1,7 +1,9 @@
 #include <iostream>
+#include <string>
 #include "URL.h"
 #include "Occurrence.h"
 #include "UnitTest.h"
+using namespace std;
 
 Occurrence::Occurrence (URL site, int occurrences) : url(site), count(occurrences) {}
 
@@ -20,6 +22,14 @@ Occurrence & Occurrence::operator = (const Occurrence & oCopy) {
   free();
   return copy(oCopy);
 } 
+
+
+bool Occurrence::operator < (const Occurrence & oCopy) const {
+  string thisURL = url.getFullURL();
+  string otherURL = oCopy.url.getFullURL();
+
+  return thisURL < otherURL; 
+}
 
 
 void Occurrence::increment () {
@@ -44,7 +54,7 @@ bool Occurrence::Test (ostream & os) {
   Occurrence happen(url);
 
   TEST(happen.url.getFullURL() == "http://www.lds.org/en/ensigns-are-cool.html");
-  TEST(happen.count == 0);
+  TEST(happen.count == 1);
 
   happen.increment();
   happen.increment();
@@ -60,8 +70,8 @@ bool Occurrence::Test (ostream & os) {
 
   TEST(happen.url.getFullURL() == happening.url.getFullURL());
   TEST(&happen != &happening);
-  TEST(happen.count == TEST + 2);
-  TEST(happening.count == 2);
+  TEST(happen.count == TEST + 3);
+  TEST(happening.count == 3);
 
   return success;
 }
