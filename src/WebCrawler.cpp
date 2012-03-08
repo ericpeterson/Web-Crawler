@@ -34,6 +34,8 @@ WebCrawler & WebCrawler::operator = (const WebCrawler & wcCopy) {
 Status WebCrawler::crawl () {
   Page currentPage;
   URL currentURL;
+  URL baseURL;
+  bool startURLFound = false;
   StopWords stopWords("stopwords file");
 
   while (!unprocessedPages.isEmpty()) {
@@ -42,7 +44,12 @@ Status WebCrawler::crawl () {
     currentPage = unprocessedPages.dequeue();
     currentURL = currentPage.getURL();
 
-    // Make sure the url is a valid html page (HTML vs. non-HTML files)
+    if (!startURLFound) {
+      baseURL = currentURL;
+      startURLFound = true;
+    }
+
+    // Make sure the url is a valid html page (HTML vs. non-HTML files) and in correct scope
 
 
     // Download selected page
