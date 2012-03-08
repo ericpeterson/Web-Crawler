@@ -60,6 +60,14 @@ class StopWords : public Set<Word> {
     static bool Test (ostream & os);
 
 
+    /**
+     *  Checks if this Set contains a given word. This check is case-insensitive.
+     *
+     *  @param `word` The word to check
+     *  @return true if the word is in the list; false otherwise
+     */
+    bool Contains (string & word) const;
+
   private:
 
     /**

@@ -1,9 +1,11 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <cctype>
 
 #include "StopWords.h"
 #include "Set.h"
+#include "StringUtil.h"
 using namespace std;
 
 typedef string Word;
@@ -18,7 +20,11 @@ StopWords::StopWords (const char* file) : Set<Word>::Set() {
 
   while (stream.good()) {
     getline(stream, currentWord);
-    Insert(currentWord);
+    StringUtil::ToLower(currentWord);
+    StringUtil::Trim(currentWord);
+    if (!currentWord.empty()) {
+      Insert(currentWord);
+    }
   }
 
   stream.close();
@@ -41,6 +47,11 @@ StopWords & StopWords::operator = (const StopWords & swCopy) {
 }
 
 
+bool StopWords::Contains (string & word) const {
+  StringUtil::ToLower(word);
+  return Set<Word>::Contains(word);
+}
+
 bool StopWords::Test (ostream & os) {
   bool success = true;
   const int NUM_WORDS = 15;
@@ -58,28 +69,23 @@ bool StopWords::Test (ostream & os) {
   };
 
   StopWords myWords(file);
-
-  TEST(myWords.IsEmpty() == true); 
-
-  for (int i = 0; i < NUM_WORDS; i++) {
-    myWords.Insert(words[i]);
-  }
-
   StopWords otherWords(file2);
   otherWords = myWords;
 
-  TEST(myWords.GetSize() == NUM_WORDS);
+  TEST(myWords.GetSize() == NUM_WORDS); 
   TEST(otherWords.GetSize() == NUM_WORDS);
   TEST(&myWords != &otherWords);
 
   for (int i = 0; i < NUM_WORDS; i++) {
-    TEST(myWords.Contains(words[i]) == true);
-    TEST(otherWords.Contains(words[i]) == true);
+    string currentWord(words[i]);
+    TEST(myWords.Contains(currentWord) == true);
+    TEST(otherWords.Contains(currentWord) == true);
   }
 
   for (int i = 0; i < NOT_INCLUDED; i++) {
-    TEST(myWords.Contains(notIncluded[i]) == false);
-    TEST(otherWords.Contains(notIncluded[i]) == false);
+    string currentWord(notIncluded[i]);
+    TEST(myWords.Contains(currentWord) == false);
+    TEST(otherWords.Contains(currentWord) == false);
   } 
 
   return success;
