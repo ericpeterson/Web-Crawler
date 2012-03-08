@@ -22,7 +22,16 @@ class Page {
     /**
      *  Overloaded constructor
      */
-    Page (string base, string relative, string descr = "");
+    Page (string base, string relative, string descr);
+
+
+    /**
+     *  Overloaded constructor -- use this for absolute urls
+     *
+     *  @param IN `absolute` URL of the Page
+     *  @param IN `descr` Description of page defaults to ""
+     */
+    Page (string absolute, string descr = "");
 
 
     /**
@@ -58,7 +67,7 @@ class Page {
 
 
     // setter method
-    void setDescription (string pageDescription);
+    void setDescription (string & pageDescription);
 
 
     // Overloaded < operator. This is used in collections requiring comparator

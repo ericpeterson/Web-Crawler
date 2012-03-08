@@ -34,6 +34,7 @@ WebCrawler & WebCrawler::operator = (const WebCrawler & wcCopy) {
 Status WebCrawler::crawl () {
   Page currentPage;
   URL currentURL;
+  StopWords stopWords("stopwords file");
 
   while (!unprocessedPages.isEmpty()) {
 
@@ -41,11 +42,14 @@ Status WebCrawler::crawl () {
     currentPage = unprocessedPages.dequeue();
     currentURL = currentPage.getURL();
 
+    // Make sure the url is a valid html page (HTML vs. non-HTML files)
+
+
     // Download selected page
     URLInputStream documentStream(currentURL.getURLString());
     
     // For all text areas in the page, parse out all of the words
-    HTMLParser htmlParser(documentStream);
+    HTMLParser htmlParser(documentStream, baseURL.getFullURL(), currentURL.getFullURL(), stopWords);
     htmlParser.parse();
  
     // For all <A> tags with HREF attributes, add the URLs in the HREF attributes

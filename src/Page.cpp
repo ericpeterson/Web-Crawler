@@ -13,6 +13,9 @@ Page::Page () : url(), description("")  {}
 Page::Page (string base, string relative, string descr) : url(relative, base), description(descr) {}
 
 
+Page::Page (string absolute, string descr) : url(absolute), description(descr) {}
+
+
 Page::~Page () {}
 
 
@@ -27,7 +30,7 @@ Page & Page::operator = (const Page & pageCopy) {
 }
 
 
-void Page::setDescription (string pageDescription) {
+void Page::setDescription (string & pageDescription) {
   this->description = pageDescription;
 }
 
@@ -65,7 +68,7 @@ bool Page::Test (ostream & os) {
   string relative2 = "./.././babies-are-cute.apx";
 
   Page pageDefault;
-  Page pageOverloaded(relative, baseURL);
+  Page pageOverloaded(relative, baseURL, "");
   Page pageWithDescription(relative2, baseURL2, description);
 
   pageDefault = pageWithDescription;

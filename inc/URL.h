@@ -93,6 +93,23 @@ class URL {
     static bool Test (ostream & os);
 
 
+    /**
+     *  A valid URL has the general form
+     *
+     *    <scheme>://<net_loc>/<path>?<query>#<fragment>
+     *
+     *  The minimum requirements for a valid url include:
+     *
+     *    * scheme must either be `http` or `file`
+     *    * if scheme is `http` then net_loc must be non-empty
+     *    * if scheme is `file` then net_loc must be empty
+     *
+     *  @param url The url to be validated
+     *
+     *  @return true if the minimum requirements are met; false otherwise
+     */
+    static bool checkIfValid (string url);
+
   private:
 
     // The entire url except the page name
@@ -109,6 +126,14 @@ class URL {
 
     // A leftover global variable from the original url resolver code
     char* relativePtr;
+
+
+    /**
+     *  Removes fragments (#) from url's
+     *
+     *  @param IN-OUT `Url` The url to purge of fragments
+     */
+    static void removeFragment (string & Url);
 
 
     /**
@@ -179,24 +204,6 @@ class URL {
      *  @return the adjusted base pointer
      */
     char* calculateBasePtr (int baseLength, char* basePtr);
-
-
-    /**
-     *  A valid URL has the general form
-     *
-     *    <scheme>://<net_loc>/<path>?<query>#<fragment>
-     *
-     *  The minimum requirements for a valid url include:
-     *
-     *    * scheme must either be `http` or `file`
-     *    * if scheme is `http` then net_loc must be non-empty
-     *    * if scheme is `file` then net_loc must be empty
-     *
-     *  @param url The url to be validated
-     *
-     *  @return true if the minimum requirements are met; false otherwise
-     */
-    bool checkIfValid (string url) const;
 
 
     /**

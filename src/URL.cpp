@@ -17,6 +17,7 @@ URL::URL () :
 URL::URL (string absoluteURL) {
   string urlPrefix = "";
   string urlPageName = "";
+  string full = absoluteURL;
 
   bool isValidURL = checkIfValid(absoluteURL);
 
@@ -25,9 +26,12 @@ URL::URL (string absoluteURL) {
     this->parseURL(absoluteURL, urlPrefix, urlPageName);
   }
 
+  removeFragment(urlPageName);  
+  removeFragment(full);
+
   this->prefix = urlPrefix;
   this->pageName = urlPageName;
-  this->fullURL = absoluteURL;
+  this->fullURL = full;
 }
 
 
@@ -69,6 +73,9 @@ URL::URL (string url, string baseURL) {
   }
 
   this->parseURL(resolvedURL, urlPrefix, urlPageName);
+
+  removeFragment(urlPageName);
+  removeFragment(resolvedURL);
 
   this->prefix = urlPrefix;
   this->pageName = urlPageName;
@@ -113,7 +120,16 @@ string URL::getPageName () const {
 }
 
 
-bool URL::checkIfValid (string url) const {
+void URL::removeFragment (string & Url) {
+  // if page name has a fragment (#) then remove it
+  size_t position = Url.find('#');
+  if (position != string::npos) {
+    Url = Url.substr(0, position);
+  }
+}
+
+
+bool URL::checkIfValid (string url) {
   string scheme;
   Index start = 0;
   Index schemeLength = 7;
@@ -271,8 +287,8 @@ char* URL::resolve (char* baseURL, char* relativeURL) {
 
 bool URL::Test (ostream & os) {
   bool success = true;
-  string startURL("file:///home/eric/myWebPages/coolEric.html");
-  string relativeURL("./.././././../natalie/herWebPages/nattles.html");
+  string startURL("file:///home/eric/myWebPages/coolEric.html#whyamIhere");
+  string relativeURL("./.././././../natalie/herWebPages/nattles.html#ijustdonknow");
 
   // One arg constructor
   URL startURLConstructor(startURL);

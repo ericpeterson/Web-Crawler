@@ -6,11 +6,12 @@
 #include "URLInputStream.h"
 #include "WordIndex.h"
 #include "Queue.h"
-#include "URL.h"
+#include "Page.h"
+#include "StopWords.h"
 #include "UnitTest.h"
 using namespace std;
 
-typedef Queue<URL> LinksList;
+typedef Queue<Page> LinksList;
 
 typedef string Description;
 
@@ -34,8 +35,11 @@ class HTMLParser {
     /**
      *  Initializes an HTMLParser object with an already downloaded HTML stream
      *  @param IN `input` The stream from the downloaded page.
+     *  @param IN `base` The base URL
+     *  @param IN `Url` The current URL being parsed
+     *  @param IN `stop` The list of stop words
      */
-    HTMLParser (URLInputStream & input);
+    HTMLParser (URLInputStream & input, string & base, string & Url, StopWords & stop);
 
 
     /**
@@ -99,8 +103,17 @@ class HTMLParser {
     // Web page description used in XML output
     Description description;
 
+    // Current URL being parsed
+    string currentURL;
+
+    // Base URL for the webcrawler
+    string baseURL;
+
     // Indexed words use in XML output
     WordIndex words;
+
+    // Words that should not be indexed
+    StopWords stopWords;
 
     // Links to potentially unprocessed pages. Pages from this collection will
     // be indexed if they have not been indexed before.
@@ -109,6 +122,16 @@ class HTMLParser {
 
     // A stream of the html document to be parsed
     URLInputStream* document;
+
+
+    /**
+     *  Determines if a char is a word character
+     *
+     *  @param IN `character` The char under examination
+     *  @return true if `character` is a word character; false otherwise
+     */
+    static bool isWordCharacter (char character);
+
 
     /**
      *  Performs the leg-work for the copy constructor and assignment operator

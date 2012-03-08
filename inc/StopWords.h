@@ -15,7 +15,7 @@ typedef string Word;
  *
  *    * Load and store stop words
  */
-class StopWords : Set<Word> {
+class StopWords : public Set<Word> {
   public:
 
     /**
@@ -56,6 +56,7 @@ class StopWords : Set<Word> {
      *  @return true if all tests pass; false otherwise. 
      */
     static bool Test (ostream & os);
+
 
   private:
 
