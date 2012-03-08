@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 #include <cctype>
+#include <cassert>
 #include "URLInputStream.h"
 #include "WordIndex.h"
 #include "Queue.h"
@@ -49,6 +50,10 @@ void HTMLParser::parse () {
   Tag ignoreTags[numIgnoreTags] = {"script"};
   bool ignoreCurrentTag = false;
   bool firstHeader = true;
+  bool gotDescription = false;
+  bool inBody = false;
+  int charCount = 0;
+  const int descrLength = 100;
 
   while (tokenizer.HasNextToken()) {
     HTMLToken currentToken = tokenizer.GetNextToken();
@@ -56,16 +61,23 @@ void HTMLParser::parse () {
     switch (currentToken.GetType()) {
       case TAG_START:
         currentTag = currentToken.GetValue();
+        if (!inBody) {
+          inBody = (currentTag == "body");
+        }
         break;
       case TAG_END:
         currentTag.clear();
+        if (currentToken.GetValue() == "body") {
+          inBody = false;
+        }
+        ignoreCurrentTag = false;
         break;
       case COMMENT:
         // ignore comments
         break;
       case TEXT:
         for (int i = 0; i < numIgnoreTags; i++) {
-          if (0 == currentTag.compare(ignoreTags[i])) {
+          if (ignoreTags[i] == currentTag) {
             ignoreCurrentTag = true;
           }
         }
@@ -74,28 +86,38 @@ void HTMLParser::parse () {
           break;
         }
 
-        if ((true == firstHeader) && ('h' == currentTag.at(0)) && 
-          (isdigit(currentTag.at(1)))) {
-
-          firstHeader = false;
-        }
-
-        if (0 == currentTag.compare("a")) {
+        if ("a" == currentTag) {
           links.push(currentToken.GetAttribute("href"));
         }
 
-        if (0 == currentTag.compare("title")) {
+        // Get the description
+        if ("title" == currentTag && !gotDescription) {
           description = currentToken.GetValue();
+          gotDescription = !description.empty();
+          firstHeader = false;
         } else if (
-          description.empty() && 
+          (currentTag.length() > 1) && 
           ('h' == currentTag.at(0)) && 
           (isdigit(currentTag.at(1))) &&
           (true == firstHeader)
           ) {
 
-          description = currentToken.GetValue(); 
-        } else if (description.empty() && ("body" == currentTag)) {
           description = currentToken.GetValue();
+          gotDescription = !description.empty();
+          firstHeader = false;
+        } else if (inBody && !gotDescription && (charCount < descrLength)) {
+          const char* text = currentToken.GetValue().c_str();
+          while ((*text != '\0') && (charCount < descrLength)) {
+            // only count if not a white space character
+            if (!isspace(*text)) { 
+              description.append(1, *text);
+              charCount++;
+            }
+
+            text++;
+          }
+          assert(charCount <= descrLength);
+          gotDescription = (charCount == descrLength);
         }
  
         break;
@@ -141,6 +163,14 @@ void HTMLParser::free () {}
 
 bool HTMLParser::Test (ostream & os) {
   bool success = true;
+
+  URLInputStream stream("file:///home/eric/school/Web-Crawler/test/test.html");
+  HTMLParser parser(stream);
+  parser.parse();
+  TEST(parser.description == "Whatisthemeaningoflife?Well,Iwouldsaythatthemeaningoflifebeginsatbirth.Sometimesthedoctorsgetconfuse");
+  //TEST(parser.description == "Hello there");
+  //TEST(parser.description == "This is it!");
+
   return success;
 }
 
