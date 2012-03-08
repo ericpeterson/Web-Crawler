@@ -12,6 +12,7 @@
 #include "StopWords.h"
 #include "WordIndex.h"
 #include "Occurrence.h"
+#include "HTMLParser.h"
 using namespace std;
 
 
@@ -73,6 +74,9 @@ int main (int argc, char* argv[]) {
   evaluateSuccess(testResult, success);
 
   testResult = WordIndex::Test(cout);
+  evaluateSuccess(testResult, success);
+
+  testResult = HTMLParser::Test(cout);
   evaluateSuccess(testResult, success);
 
   if (true == success) {

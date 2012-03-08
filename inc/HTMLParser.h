@@ -1,10 +1,16 @@
 #ifndef _HTML_PARSER_H_
 #define _HTML_PARSER_H_
 
+#include <iostream>
 #include <string>
 #include "URLInputStream.h"
 #include "WordIndex.h"
-#include "LinksList.h"
+#include "Queue.h"
+#include "URL.h"
+#include "UnitTest.h"
+using namespace std;
+
+typedef Queue<URL> LinksList;
 
 typedef string Description;
 
@@ -27,8 +33,9 @@ class HTMLParser {
 
     /**
      *  Initializes an HTMLParser object with an already downloaded HTML stream
+     *  @param IN `input` The stream from the downloaded page.
      */
-    HTMLParser (URLInputStream* input);
+    HTMLParser (URLInputStream & input);
 
 
     /**
@@ -64,19 +71,28 @@ class HTMLParser {
     /**
      *  Getter for description
      */
-    Description getDescription () const;
+    Description & getDescription ();
 
 
     /**
      *  Getter for words
      */
-    WordIndex getWords () const;
+    WordIndex & getWords ();
 
 
     /**
      *  Getter for links
      */
-    LinksList getLinks () const;
+    LinksList & getLinks ();
+
+
+    /**
+     *  Unit test for this class
+     * 
+     *  @param `os` The output stream where test result is sent
+     *  @return true if all tests pass; false otherwise
+     */
+    static bool Test (ostream & os);
 
   private:
 

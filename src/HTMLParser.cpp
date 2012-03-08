@@ -1,23 +1,29 @@
 #include <string>
-#include "URLInputStream.h"
-#include "WordIndex"
-#include "LinksList"
-#include "HTMLTokenizer.h"
-#include "HTMLToken.h"
 #include <iostream>
 #include <cctype>
+#include "URLInputStream.h"
+#include "WordIndex.h"
+#include "Queue.h"
+#include "URL.h"
+#include "HTMLTokenizer.h"
+#include "HTMLToken.h"
+#include "HTMLParser.h"
+#include "UnitTest.h"
+using namespace std;
 
+typedef Queue<URL> LinksList;
+typedef string Description;
 typedef string Tag;
 typedef int Size;
 
 HTMLParser::HTMLParser () : 
-    description(""), words(new WordIndex())
-  , links(new LinksList()), document(NULL) {}
+    description(""), words(WordIndex())
+  , links(LinksList()), document(NULL) {}
 
 
-HTMLParser::HTMLParser (const URLInputStream & input) :
-    description(""), words(new WordIndex)
-  , links(new LinksList()), document(&input) {}
+HTMLParser::HTMLParser (URLInputStream & input) :
+    description(""), words(WordIndex())
+  , links(LinksList()), document(&input) {}
 
 
 HTMLParser::~HTMLParser () {
@@ -38,7 +44,6 @@ HTMLParser & HTMLParser::operator = (const HTMLParser & hpCopy) {
 
 void HTMLParser::parse () {
   HTMLTokenizer tokenizer(document);
-  HTMLToken currentToken;
   Tag currentTag;
   const Size numIgnoreTags = 1; 
   Tag ignoreTags[numIgnoreTags] = {"script"};
@@ -46,7 +51,7 @@ void HTMLParser::parse () {
   bool firstHeader = true;
 
   while (tokenizer.HasNextToken()) {
-    currentToken = tokenizer.GetNextToken();
+    HTMLToken currentToken = tokenizer.GetNextToken();
  
     switch (currentToken.GetType()) {
       case TAG_START:
@@ -76,7 +81,7 @@ void HTMLParser::parse () {
         }
 
         if (0 == currentTag.compare("a")) {
-          links.insert(currentToken.GetAttribute("href"));
+          links.push(currentToken.GetAttribute("href"));
         }
 
         if (0 == currentTag.compare("title")) {
@@ -89,7 +94,7 @@ void HTMLParser::parse () {
           ) {
 
           description = currentToken.GetValue(); 
-        } else if (description.empty() && (0 == currentTag.GetValue().compare("body"))) {
+        } else if (description.empty() && ("body" == currentTag)) {
           description = currentToken.GetValue();
         }
  
@@ -104,17 +109,17 @@ void HTMLParser::parse () {
 }
 
 
-Description HTMLParser::getDescription () const {
+Description & HTMLParser::getDescription () {
   return description;
 }
 
 
-WordIndex HTMLParser::getWords () const {
+WordIndex & HTMLParser::getWords () {
   return words;
 }
 
 
-LinksList HTMLParser::getLinks () const {
+LinksList & HTMLParser::getLinks () {
   return links;
 }
 
@@ -131,8 +136,11 @@ HTMLParser & HTMLParser::copy (const HTMLParser & hpCopy) {
 }
 
 
-void HTMLParser::free () {
-  delete words;
-  delete links;
+void HTMLParser::free () {}
+
+
+bool HTMLParser::Test (ostream & os) {
+  bool success = true;
+  return success;
 }
 

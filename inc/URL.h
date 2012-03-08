@@ -67,6 +67,15 @@ class URL {
     URL & operator = (const URL & uCopy);
 
 
+    /**
+     *  Overloaded does not equal operator
+     *
+     *  @param `uCopy` The URL object to be copied
+     *  @return true if this URL does not equal uCopy; false otherwise
+     */
+    bool operator != (const URL & uCopy);
+
+
     // getter methods
     string getPrefix () const;
     string getPageName () const;

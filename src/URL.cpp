@@ -90,6 +90,14 @@ URL & URL::operator = (const URL & uCopy) {
 }
 
 
+bool URL::operator != (const URL & uCopy) {
+  string thisURL = this->getFullURL();
+  string otherURL = uCopy.getFullURL();
+
+  return thisURL != otherURL;
+}
+
+
 string URL::getFullURL () const {
   return this->fullURL;
 }
