@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <fstream>
 
 #include "StopWords.h"
 #include "Set.h"
@@ -7,7 +8,21 @@ using namespace std;
 
 typedef string Word;
 
-StopWords::StopWords () : Set<Word>::Set() {}
+StopWords::StopWords (const char* file) : Set<Word>::Set() {
+  ifstream stream(file);
+  string currentWord;
+
+  if (!stream.is_open()) {
+    // There's a problem
+  }
+
+  while (stream.good()) {
+    getline(stream, currentWord);
+    Insert(currentWord);
+  }
+
+  stream.close();
+}
 
 
 StopWords::~StopWords () {
@@ -30,6 +45,8 @@ bool StopWords::Test (ostream & os) {
   bool success = true;
   const int NUM_WORDS = 15;
   const int NOT_INCLUDED = 10;
+  const char* file = "test/stopWords.txt";
+  const char* file2 = "test/stopWords2.txt";
   string words[NUM_WORDS] = {
       "a", "ab", "hi", "there", "what"
     , "z", "hypocephalis", "word", "and", "Natalie"
@@ -40,7 +57,7 @@ bool StopWords::Test (ostream & os) {
     , "chees", "water", "flower", "mansion", "bobsledteam"
   };
 
-  StopWords myWords;
+  StopWords myWords(file);
 
   TEST(myWords.IsEmpty() == true); 
 
@@ -48,7 +65,7 @@ bool StopWords::Test (ostream & os) {
     myWords.Insert(words[i]);
   }
 
-  StopWords otherWords;
+  StopWords otherWords(file2);
   otherWords = myWords;
 
   TEST(myWords.GetSize() == NUM_WORDS);

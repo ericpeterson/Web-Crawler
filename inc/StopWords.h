@@ -20,8 +20,10 @@ class StopWords : public Set<Word> {
 
     /**
      *  Default constructor
+     *
+     *  @param IN `file` The file containing the stop words
      */
-    StopWords ();
+    StopWords (const char* file);
 
 
     /**

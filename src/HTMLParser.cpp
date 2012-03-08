@@ -21,7 +21,7 @@ typedef int Size;
 
 HTMLParser::HTMLParser () : 
     description(""), currentURL(""), baseURL(""), words(WordIndex()), 
-    stopWords(StopWords()), links(LinksList()), document(NULL) {}
+    stopWords(StopWords("")), links(LinksList()), document(NULL) {}
 
 
 HTMLParser::HTMLParser (
@@ -38,7 +38,7 @@ HTMLParser::~HTMLParser () {
 }
 
 
-HTMLParser::HTMLParser (const HTMLParser & hpCopy) {
+HTMLParser::HTMLParser (const HTMLParser & hpCopy) : stopWords(StopWords("")) {
   copy(hpCopy);
 }
 
@@ -206,6 +206,7 @@ HTMLParser & HTMLParser::copy (const HTMLParser & hpCopy) {
     baseURL = hpCopy.baseURL;
     currentURL = hpCopy.currentURL;
     words = hpCopy.words;
+    stopWords = hpCopy.stopWords;
     links = hpCopy.links;
     document = hpCopy.document;
   }
@@ -221,7 +222,7 @@ bool HTMLParser::Test (ostream & os) {
   bool success = true;
   string base = "file:///home/eric/school/Web-Crawler/test/";
 
-  StopWords stopWords;
+  StopWords stopWords("test/stopWords.txt");
   URLInputStream stream("file:///home/eric/school/Web-Crawler/test/test.html");
   HTMLParser parser(stream, base, base, stopWords);
   parser.parse();
