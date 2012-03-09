@@ -60,24 +60,29 @@ void WebCrawler::crawl (URL & startURL, FileName & stopWord) {
 
     // Download selected page
     string currentURLStr = currentURL.getFullURL();
-    URLInputStream document(currentURLStr);
-    
-    // For all text areas in the page, parse out all of the words
-    HTMLParser htmlParser(startURLStr, stopWord);
     string description;
-    htmlParser.parse(
-        currentURLStr
-      , document
-      , description
-      , this->wordIndex
-      , unprocessedPages
-    );
+
+    try {
+      URLInputStream document(currentURLStr);
+      
+      // For all text areas in the page, parse out all of the words
+      HTMLParser htmlParser(startURLStr, stopWord);
+      htmlParser.parse(
+          currentURLStr
+        , document
+        , description
+        , this->wordIndex
+        , unprocessedPages
+      );
+
+      document.Close();
+    } catch (CS240Exception & exception) {
+      cout << exception.GetMessage() << endl;
+    }
  
     // Save summary information for the page
     currentPage.setDescription(description);
     this->processedPages.Insert(currentPage); 
-
-    document.Close();
 
     // Repeat until there are no pages left to index
   }
@@ -101,7 +106,7 @@ bool WebCrawler::Test (ostream & os) {
     cout << exception.GetMessage() << endl;
   }
 
-  cout << crawler.wordIndex << endl; 
+  //cout << crawler.wordIndex << endl; 
 
   return success;
 }

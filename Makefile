@@ -42,8 +42,8 @@ valgrind: bin/testdriver
 
 # These are the only dependency lines that may change during development
 
-bin/crawler: $(SRC_OBJ)/helloMake.o lib/libcs240utils.a
-	g++ -o bin/crawler $(SRC_OBJ)/helloMake.o $(LFLAGS)
+bin/crawler: $(SRC_OBJ)/main.o $(SRC_OBJ_FILES) lib/libcs240utils.a
+	g++ -o bin/crawler $(SRC_OBJ)/main.o $(SRC_OBJ_FILES) $(LFLAGS)
 
 bin/testdriver: $(SRC_OBJ)/testDriver.o $(SRC_OBJ_FILES) lib/libcs240utils.a
 	g++ -o bin/testdriver $(SRC_OBJ)/testDriver.o $(SRC_OBJ_FILES) $(LFLAGS)
@@ -54,8 +54,8 @@ bin/testdriver: $(SRC_OBJ)/testDriver.o $(SRC_OBJ_FILES) lib/libcs240utils.a
 lib/libcs240utils.a: $(LIBOBJ_FILES)
 	ar r lib/libcs240utils.a $(LIBOBJ_FILES)
 
-$(SRC_OBJ)/helloMake.o: $(SRC)/helloMake.cpp
-	g++ -o $(SRC_OBJ)/helloMake.o $(CFLAGS) $(SRC)/helloMake.cpp
+$(SRC_OBJ)/main.o: $(SRC)/main.cpp
+	g++ -o $(SRC_OBJ)/main.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/main.cpp
 
 $(SRC_OBJ)/URL.o: $(SRC)/URL.cpp $(INCLUDE)/URL.h $(LIB_INCLUDE)/UnitTest.h
 	g++ -o $(SRC_OBJ)/URL.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/URL.cpp
