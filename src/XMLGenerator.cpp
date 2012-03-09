@@ -39,13 +39,13 @@ void XMLGenerator::generate (URL & startURL, PageSet & pages, WordIndex & words)
   }
 
   of << ("<website>\n");
-  of << ("\t<startURL>\n\t\t");
+  of << ("\t<start-url>\n\t\t");
   try {
     of << EncodeToXmlCopy(startURL.getFullURL());
   } catch (CS240Exception & exception) {
     cout << exception.GetMessage() << endl;
   }
-  of << ("\n\t</startURL>\n");
+  of << ("\n\t</start-url>\n");
 
   of << ("\t<pages>\n");
   of << pages; 
