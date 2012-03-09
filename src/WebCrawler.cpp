@@ -8,6 +8,7 @@
 #include "Page.h"
 #include "WordIndex.h"
 #include "WebCrawler.h"
+#include "XMLGenerator.h"
 
 #include "URLInputStream.h"
 #include "UnitTest.h"
@@ -18,7 +19,8 @@ using namespace std;
 typedef string FileName;
 
 
-WebCrawler::WebCrawler () : processedPages(PageSet()), wordIndex(WordIndex()) {}
+WebCrawler::WebCrawler (URL & start) :
+  startURL(start), processedPages(PageSet()), wordIndex(WordIndex()) {}
 
 
 WebCrawler::WebCrawler (const WebCrawler & wcCopy) : 
@@ -38,9 +40,9 @@ WebCrawler & WebCrawler::operator = (const WebCrawler & wcCopy) {
 }
 
 
-void WebCrawler::crawl (URL & startURL, FileName & stopWord) {
+void WebCrawler::crawl (FileName & stopWord) {
   // Initialize the queue with the start page
-  string startURLStr = startURL.getFullURL();
+  string startURLStr = this->startURL.getFullURL();
   Page startPage(startURLStr);
   PageQueue unprocessedPages;
   unprocessedPages.enqueue(startPage);
@@ -90,7 +92,12 @@ void WebCrawler::crawl (URL & startURL, FileName & stopWord) {
 
 
 void WebCrawler::printXML (FileName & output) {
+  URL start = this->startURL;
+  PageSet set = this->processedPages;
+  WordIndex index = this->wordIndex;
 
+  XMLGenerator generator(output);
+  generator.generate(start, set, index);
 }
 
 
@@ -99,9 +106,9 @@ bool WebCrawler::Test (ostream & os) {
 
   URL startURL("file:///home/eric/school/Web-Crawler/test/test.html");
   string stopWord = "test/stopWords.txt";
-  WebCrawler crawler;
+  WebCrawler crawler(startURL);
   try {
-    crawler.crawl(startURL, stopWord);
+    crawler.crawl(stopWord);
   } catch (CS240Exception & exception) {
     cout << exception.GetMessage() << endl;
   }

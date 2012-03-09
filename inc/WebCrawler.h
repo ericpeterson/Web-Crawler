@@ -22,8 +22,12 @@ typedef string FileName;
 class WebCrawler {
   public:
     
-    // Default constructor
-    WebCrawler ();
+    /**
+     *  Overloaded constructor
+     *  
+     *  @param IN `startURL` The start URL for this crawler
+     */
+    WebCrawler (URL & startURL);
 
 
     /**
@@ -51,12 +55,9 @@ class WebCrawler {
     /**
      *  Download the start URL and begins indexing the words
      *
-     *  @param IN `startURL` The starting URL
-     *
-     *
      *  @param IN `stopWord` File containing list of words that will not be indexed
      */
-    void crawl (URL & startURL, FileName & stopWord);
+    void crawl (FileName & stopWord);
 
 
     /**
@@ -76,6 +77,9 @@ class WebCrawler {
     static bool Test (ostream & os);
 
   private:
+
+    // Start URL of this crawler
+    URL startURL;
 
     // A set of pages that have already been processed. Helps prevent the same
     // page from indexed twice.

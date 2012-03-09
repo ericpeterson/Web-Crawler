@@ -20,8 +20,8 @@ int main (int argc, char* argv[]) {
   string stopWord = argv[3];
 
   try {
-    WebCrawler crawler;
-    crawler.crawl(startURL, stopWord);
+    WebCrawler crawler(startURL);
+    crawler.crawl(stopWord);
     crawler.printXML(outFile);
   } catch (CS240Exception & exception) {
     cout << exception.GetMessage() << endl;
