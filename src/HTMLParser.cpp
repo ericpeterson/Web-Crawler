@@ -138,7 +138,7 @@ void HTMLParser::configureTagStart (HTMLToken & currentToken, string & currentUR
       if (isAbsolute) {
         unprocessedPages.enqueue(Page(href));
       } else {
-        unprocessedPages.enqueue(Page(this->baseURL, href, ""));
+        unprocessedPages.enqueue(Page(currentURL, href, ""));
       }
     }
   }
