@@ -103,13 +103,13 @@ bool URLFilter::Test (ostream & os) {
   URL startURL("http://www.google.com/a/b/c/d.cgi");
   URLFilter filter(startURL);
   for (int i = 0; i < NUM_VALID; i++) {
-    bool isValid = filter.filter(validURLS[i]);
-    TEST(isValid == true);
+    bool needsToBeFiltered = filter.filter(validURLS[i]);
+    TEST(needsToBeFiltered == false);
   }
 
   for (int i = 0; i < NUM_INVALID; i++) {
-    bool isValid = filter.filter(invalidURLS[i]);
-    TEST(isValid == false);
+    bool needsToBeFiltered = filter.filter(invalidURLS[i]);
+    TEST(needsToBeFiltered == true);
   }
 
   return success;
