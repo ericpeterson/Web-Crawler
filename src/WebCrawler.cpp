@@ -11,6 +11,7 @@
 
 #include "URLInputStream.h"
 #include "UnitTest.h"
+#include "CS240Exception.h"
 
 using namespace std;
 
@@ -37,7 +38,7 @@ WebCrawler & WebCrawler::operator = (const WebCrawler & wcCopy) {
 }
 
 
-void WebCrawler::crawl (URL & startURL, FileName & output, FileName & stopWord) {
+void WebCrawler::crawl (URL & startURL, FileName & stopWord) {
   // Initialize the queue with the start page
   string startURLStr = startURL.getFullURL();
   Page startPage(startURLStr);
@@ -83,8 +84,25 @@ void WebCrawler::crawl (URL & startURL, FileName & output, FileName & stopWord) 
 }
 
 
+void WebCrawler::printXML (FileName & output) {
+
+}
+
+
 bool WebCrawler::Test (ostream & os) {
   bool success = true;
+
+  URL startURL("file:///home/eric/school/Web-Crawler/test/test.html");
+  string stopWord = "test/stopWords.txt";
+  WebCrawler crawler;
+  try {
+    crawler.crawl(startURL, stopWord);
+  } catch (CS240Exception & exception) {
+    cout << exception.GetMessage() << endl;
+  }
+
+  cout << crawler.wordIndex << endl; 
+
   return success;
 }
 

@@ -53,11 +53,18 @@ class WebCrawler {
      *
      *  @param IN `startURL` The starting URL
      *
-     *  @param IN `output` The name of the file where the xml output will be written
      *
      *  @param IN `stopWord` File containing list of words that will not be indexed
      */
-    void crawl (URL & startURL, FileName & output, FileName & stopWord);
+    void crawl (URL & startURL, FileName & stopWord);
+
+
+    /**
+     *  Writes the web crawler results to an XML file
+     *
+     *  @param IN `output` The name of the file where the xml output will be written
+     */
+    void printXML (FileName & output);
 
 
     /**
