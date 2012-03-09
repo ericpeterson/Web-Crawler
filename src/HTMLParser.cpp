@@ -130,16 +130,20 @@ void HTMLParser::configureTagStart (HTMLToken & currentToken, string & currentUR
   // links
   if (("a" == currentTag) && inHTML) {
     string href = currentToken.GetAttribute("href");
-    URL base = URL(this->baseURL);
-    URLFilter filter(base);
-    bool isAcceptable = filter.filter(currentURL);
-    if (isAcceptable) {
-      bool isAbsolute = URL::checkIfValid(href);
-      if (isAbsolute) {
-        unprocessedPages.enqueue(Page(href));
-      } else {
-        unprocessedPages.enqueue(Page(currentURL, href, ""));
-      }
+
+    /*
+      URL constructor will auto-resolve href. The URL constructor is called
+      under the hood by the 3-arg Page constructor.
+    */
+    Page hrefWrapper(currentURL, href, "");
+
+    // filter the resolved href relative to the scope of start url
+    URL startURL(this->baseURL);
+    URLFilter filter(startURL);
+    string resolvedHREF = hrefWrapper.getURL().getFullURL();
+    bool shouldFilterHREF = filter.filter(resolvedHREF);
+    if (!shouldFilterHREF) {
+      unprocessedPages.enqueue(hrefWrapper);
     }
   }
 }

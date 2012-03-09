@@ -37,8 +37,8 @@ class URLFilter {
      *
      *  @param url The url to be checked
      *
-     *  @return true if url is in the scope of the starting web site, is valid
-     *          html and has not been indexed previously; false otherwise 
+     *  @return false if url is in the scope of the starting web site, is valid
+     *          html and has not been indexed previously; true otherwise 
      */
     bool filter (const URL & url);
 

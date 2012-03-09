@@ -15,7 +15,7 @@ URLFilter::URLFilter (URL & start) : startURL(start) {}
 bool URLFilter::filter (const URL & url) {
   // check scope -- we stop here if out of scope
   if (url.getPrefix() != this->startURL.getPrefix()) {
-    return false;
+    return true;
   }
 
   // we assume the url is already resolved
@@ -32,24 +32,24 @@ bool URLFilter::filter (const URL & url) {
   //  1. <path> end's with a '/'. The full URL end's in '/'. This may not be
   //    entirely necessary for already resolved URL's
   size_t fullLength = fullWithoutQuery.length();
-  bool isValid = false;
+  bool shouldFilter = true;
   if (!fullWithoutQuery.empty() && (fullWithoutQuery.at(fullLength-1) == '/')) {
-    isValid = true;
+    shouldFilter = false;
   }
   
   //  2. file name contains no period's (no extensions)
   size_t indexOfPeriod = pageNameWithoutQuery.find('.');
   if (!pageNameWithoutQuery.empty() && (string::npos == indexOfPeriod)) {
-    isValid = true;
+    shouldFilter = false;
   }
 
   //  3. file name has a specific extension
   bool hasSpecificExtension = checkExtension(pageNameWithoutQuery);
   if (hasSpecificExtension) {
-    isValid = true;
+    shouldFilter = false;
   }
 
-  return isValid;
+  return shouldFilter;
 }
 
 
