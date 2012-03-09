@@ -3,10 +3,14 @@
 
 #include <iostream>
 #include <string>
-#include "URLInputStream.h"
+
 #include "WordIndex.h"
 #include "PageQueue.h"
 #include "StopWords.h"
+
+#include "URLInputStream.h"
+#include "HTMLToken.h"
+
 using namespace std;
 
 typedef string Description;
@@ -77,6 +81,123 @@ class HTMLParser {
       , PageQueue & unprocessedPages
     );
 
+    
+    /**
+     *  Checks if the current tag should be ignored (script tag)
+     *  
+     *  @param IN `currentTag` The tag being examined
+     *  @return true if this tag should be ignored (script tag); false otherwise
+     */   
+    bool checkTag (string & currentTag);
+
+
+    /**
+     *  Index the words in a <title> or <body> tag within <html> tag
+     *  
+     *  @param IN `currentToken` The current html token in parsing
+     *  @param IN `currentURL` The web page that will be mapped to the word
+     *    (on which the word was found)
+     *  @param OUT `words` The Map of words already indexed
+     */
+    void indexWords (HTMLToken & currentToken, string & currentURL, WordIndex & words); 
+
+
+    /**
+     *  Sets appropriate booleans for start tags and parses links
+     *
+     *  @param IN `currentToken` The current HTML token in parsing
+     *  @param IN `currentURL` The web page that will be mapped to the word
+     *    (on which the word was found)
+     *  @param IN-OUT `currentTag` The current html tag we are parsing
+     *  @param IN-OUT `inBody` Boolean that tells that we are in <body> tag
+     *  @param IN-OUT `inHTML` Boolean that tells that we are in <html> tag
+     *  @param IN-OUT `inTitle` Boolean that tells that we are in <title> tag
+     *  @param OUT `unprocessedPages` The queue of pages yet to be indexed
+     */
+    void configureTagStart (
+        HTMLToken & currentToken
+      , string & currentURL
+      , string & currentTag
+      , bool & inBody
+      , bool & inHTML
+      , bool & inTitle
+      , PageQueue & unprocessedPages
+    ); 
+
+
+    /**
+     *  Sets appropriate booleans for end tags
+     *
+     *  @param IN `currentToken` The current HTML token in parsing
+     *  @param OUT `currentTag` The current html tag we are parsing
+     *  @param OUT `inBody` Boolean that tells that we are in <body> tag
+     *  @param OUT `inHTML` Boolean that tells that we are in <html> tag
+     *  @param OUT `inTitle` Boolean that tells that we are in <title> tag
+     *  @param OUT `ignoreCurrentTag` Boolean that tells us to ignore script tags
+     */
+    void configureTagEnd (
+        const HTMLToken & currentToken
+      , string & currentTag
+      , bool & inBody
+      , bool & inHTML
+      , bool & inTitle
+      , bool & ignoreCurrentTag
+    );
+
+
+    /**
+     *  Verifies that we need to index words
+     *
+     *  @param IN `inBody` Boolean that tells that we are in <body> tag
+     *  @param IN `inHTML` Boolean that tells that we are in <html> tag
+     *  @param IN `inTitle` Boolean that tells that we are in <title> tag
+     *  @param IN `currentToken` The current HTML token in parsing
+     *  @param IN `currentURL` The current URL being parsed
+     *  @param IN `words` The continuing word index for the web crawler
+     */
+    void checkToIndexWords (
+        const bool & inBody
+      , const bool & inHTML
+      , const bool & inTitle
+      , HTMLToken & currentToken
+      , string & currentURL
+      , WordIndex & words
+    );
+
+
+    /**
+     *  Determines whether we should use the title for the description of a web page
+     *
+     *  @param IN `currentTag` The current html tag we are parsing
+     *  @param IN `gotDescription` A boolean indicating when the description is complete
+     *  @param IN `inHTML` Boolean that tells that we are in <html> tag
+     *  @param IN `ignoreCurrentTag` Boolean that tells us to ignore script tags
+     */
+    bool shouldWeUseTitle (
+        const string & currentTag
+      , const bool gotDescription
+      , const bool inHTML
+      , const bool ignoreCurrentTag
+    ) const;
+
+
+    /**
+     *
+     *
+     *  @param IN `currentToken` The current html token in parsing
+     *  @param IN `descrLength` The max length of web page description
+     *  @param IN-OUT `charCount` Keeps track of how many characters are used
+     *    in web page description.
+     *  @param OUT `description` The web page description
+     *  @param OUT `gotDescription` A boolean indicating when the description is complete
+     */   
+    void buildDescription (
+        HTMLToken & currentToken
+      , const int & descrLength
+      , int & charCount
+      , string & description
+      , bool & gotDescription
+    );
 
     /**
      *  Unit test for this class

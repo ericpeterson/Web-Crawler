@@ -56,19 +56,136 @@ HTMLParser & HTMLParser::operator = (const HTMLParser & hpCopy) {
 }
 
 
+bool HTMLParser::checkTag (string & currentTag) {
+  const Size numIgnoreTags = 1; 
+  Tag ignoreTags[numIgnoreTags] = {"script"};
+  bool ignoreCurrentTag = false;
+  for (int i = 0; i < numIgnoreTags; i++) {
+    if (ignoreTags[i] == currentTag) {
+      ignoreCurrentTag = true;
+      break;
+    }
+  }
+
+  return ignoreCurrentTag;
+}
+
+
+void HTMLParser::indexWords (HTMLToken & currentToken, string & currentURL, WordIndex & words) {
+  const char* text = currentToken.GetValue().c_str();
+  string currentWord;
+  while (*text != '\0') {
+    bool isWordChar = isWordCharacter(*text); 
+    if (!isWordChar && (currentWord != "")) {
+      StringUtil::ToLower(currentWord);
+      bool filterWord = stopWords.Contains(currentWord); 
+      if (!isdigit(currentWord.at(0)) && !filterWord) {
+        words.Insert(currentWord, currentURL);
+      }
+      currentWord = "";
+    } else if (isWordChar) {
+      currentWord.append(1, *text);  
+    }
+
+    text++;
+  }
+}
+
+
+void HTMLParser::buildDescription (HTMLToken & currentToken, const int & descrLength
+  , int & charCount, string & description, bool & gotDescription) {
+
+  const char* text = currentToken.GetValue().c_str();
+  while ((*text != '\0') && (charCount < descrLength)) {
+    description.append(1, *text);
+
+    // only count if not a white space character
+    if (!isspace(*text)) { 
+      charCount++;
+    }
+
+    text++;
+  }
+  assert(charCount <= descrLength);
+  gotDescription = (charCount == descrLength);
+}
+
+
+void HTMLParser::configureTagStart (HTMLToken & currentToken, string & currentURL
+  , string & currentTag, bool & inBody, bool & inHTML, bool & inTitle
+  , PageQueue & unprocessedPages) {
+
+  currentTag = currentToken.GetValue();
+  StringUtil::ToLower(currentTag);
+  if (!inBody) {
+    inBody = (currentTag == "body");
+  }
+  if (!inHTML) {
+    inHTML = (currentTag == "html");
+  }
+  if (!inTitle) {
+    inTitle = (currentTag == "title");
+  }
+
+  // links
+  if ("a" == currentTag && inHTML) {
+    string href = currentToken.GetAttribute("href");
+    URL base = URL(this->baseURL);
+    URLFilter filter(base);
+    bool isAcceptable = filter.filter(currentURL);
+    if (isAcceptable) {
+      bool isAbsolute = URL::checkIfValid(href);
+      if (isAbsolute) {
+        unprocessedPages.enqueue(Page(href));
+      } else {
+        unprocessedPages.enqueue(Page(this->baseURL, href, ""));
+      }
+    }
+  }
+}
+
+
+void HTMLParser::configureTagEnd (const HTMLToken & currentToken, string & currentTag
+  , bool & inBody, bool & inHTML, bool & inTitle, bool & ignoreCurrentTag) {
+
+  currentTag.clear();
+  if (currentToken.GetValue() == "body") {
+    inBody = false;
+  }
+  if (currentToken.GetValue() == "html") {
+    inHTML = false;
+  }
+  if (currentToken.GetValue() == "title") {
+    inTitle = false;
+  }
+  ignoreCurrentTag = false;
+}
+
+
+bool HTMLParser::shouldWeUseTitle (const string & currentTag, const bool gotDescription,
+  const bool inHTML, const bool ignoreCurrentTag) const {
+
+ return ("title" == currentTag) && (!gotDescription) && inHTML && !ignoreCurrentTag;
+}
+
+
+void HTMLParser::checkToIndexWords (const bool & inBody, const bool & inHTML, const bool & inTitle
+  , HTMLToken & currentToken, string & currentURL, WordIndex & words) {
+
+  // Index words
+  if (inHTML && (inTitle || inBody)) {
+    indexWords(currentToken, currentURL, words);
+  }
+}
+
+
 void HTMLParser::parse (string & currentURL, URLInputStream & document,
   Description & description, WordIndex & words, PageQueue & unprocessedPages) {
   try {
     HTMLTokenizer tokenizer(&document);
     Tag currentTag;
-    const Size numIgnoreTags = 1; 
-    Tag ignoreTags[numIgnoreTags] = {"script"};
-    bool ignoreCurrentTag = false;
-    bool firstHeader = true;
-    bool gotDescription = false;
-    bool inBody = false;
-    bool inHTML = false;
-    bool inTitle = false;
+    bool ignoreCurrentTag = false, gotDescription = false, inBody = false;
+    bool inHTML = false, inTitle = false, firstHeader = true;
     int charCount = 0;
     const int descrLength = 100;
 
@@ -77,112 +194,35 @@ void HTMLParser::parse (string & currentURL, URLInputStream & document,
    
       switch (currentToken.GetType()) {
         case TAG_START:
-          currentTag = currentToken.GetValue();
-          StringUtil::ToLower(currentTag);
-          if (!inBody) {
-            inBody = (currentTag == "body");
-          }
-          if (!inHTML) {
-            inHTML = (currentTag == "html");
-          }
-          if (!inTitle) {
-            inTitle = (currentTag == "title");
-          }
-
-          // links
-          if ("a" == currentTag && inHTML) {
-            string href = currentToken.GetAttribute("href");
-            URL base = URL(this->baseURL);
-            URLFilter filter(base);
-            bool isAcceptable = filter.filter(currentURL);
-            if (isAcceptable) {
-              bool isAbsolute = URL::checkIfValid(href);
-              if (isAbsolute) {
-                unprocessedPages.enqueue(Page(href));
-              } else {
-                unprocessedPages.enqueue(Page(baseURL, href, ""));
-              }
-            }
-          }
-
+          configureTagStart(currentToken, currentURL, currentTag, inBody
+            , inHTML, inTitle, unprocessedPages);
           break;
         case TAG_END:
-          currentTag.clear();
-          if (currentToken.GetValue() == "body") {
-            inBody = false;
-          }
-          if (currentToken.GetValue() == "html") {
-            inHTML = false;
-          }
-          if (currentToken.GetValue() == "title") {
-            inTitle = false;
-          }
-          ignoreCurrentTag = false;
+          configureTagEnd(currentToken, currentTag, inBody, inHTML, inTitle
+            , ignoreCurrentTag);
           break;
         case COMMENT:
           // ignore comments
           break;
         case TEXT:
-          for (int i = 0; i < numIgnoreTags; i++) {
-            if (ignoreTags[i] == currentTag) {
-              ignoreCurrentTag = true;
-            }
-          }
+          ignoreCurrentTag = checkTag(currentTag);
 
-          if (true == ignoreCurrentTag) {
-            break;
-          }
-
-          // Index words
-          if (inHTML && (inTitle || inBody)) {
-            const char* text = currentToken.GetValue().c_str();
-            string currentWord;
-            while (*text != '\0') {
-              bool isWordChar = isWordCharacter(*text); 
-              if (!isWordChar && (currentWord != "")) {
-                StringUtil::ToLower(currentWord);
-                bool filterWord = stopWords.Contains(currentWord); 
-                if (!isdigit(currentWord.at(0)) && !filterWord) {
-                  words.Insert(currentWord, currentURL);
-                }
-                currentWord = "";
-              } else if (isWordChar) {
-                currentWord.append(1, *text);  
-              }
-
-              text++;
-            }
-          }
+          checkToIndexWords(inBody, inHTML, inTitle, currentToken, currentURL, words);
 
           // Get the description
-          if ("title" == currentTag && !gotDescription && inHTML) {
+          if (shouldWeUseTitle(currentTag, gotDescription, inHTML, ignoreCurrentTag)) {
             description = currentToken.GetValue();
             gotDescription = !description.empty();
             firstHeader = false;
-          } else if (
-            (currentTag.length() > 1) && 
-            ('h' == currentTag.at(0)) && 
-            (isdigit(currentTag.at(1))) &&
-            (true == firstHeader) &&
-            inHTML
-            ) {
-
+          } else if ((currentTag.length() > 1) && ('h' == currentTag.at(0)) &&
+            (isdigit(currentTag.at(1))) && (true == firstHeader) && inHTML &&
+            !ignoreCurrentTag) {
             description = currentToken.GetValue();
             gotDescription = !description.empty();
             firstHeader = false;
-          } else if (inBody && !gotDescription && (charCount < descrLength) && inHTML) {
-            const char* text = currentToken.GetValue().c_str();
-            while ((*text != '\0') && (charCount < descrLength)) {
-              // only count if not a white space character
-              if (!isspace(*text)) { 
-                description.append(1, *text);
-                charCount++;
-              }
-
-              text++;
-            }
-            assert(charCount <= descrLength);
-            gotDescription = (charCount == descrLength);
+          } else if (inBody && !gotDescription && (charCount < descrLength) &&
+            inHTML && !ignoreCurrentTag) {
+            buildDescription(currentToken, descrLength, charCount, description, gotDescription);
           }
    
           break;
