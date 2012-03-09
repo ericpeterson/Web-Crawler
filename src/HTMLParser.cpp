@@ -128,7 +128,7 @@ void HTMLParser::configureTagStart (HTMLToken & currentToken, string & currentUR
   }
 
   // links
-  if ("a" == currentTag && inHTML) {
+  if (("a" == currentTag) && inHTML) {
     string href = currentToken.GetAttribute("href");
     URL base = URL(this->baseURL);
     URLFilter filter(base);
