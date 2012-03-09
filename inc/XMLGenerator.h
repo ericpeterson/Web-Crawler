@@ -7,7 +7,6 @@
 #include "WordIndex.h"
 using namespace std;
 
-typedef string XMLDoc;
 
 /**
  *  Generates the XML output of the web crawler
@@ -20,9 +19,11 @@ class XMLGenerator {
   public:
 
     /**
-     *  Default constructor
+     *  Overloaded constructor
+     *
+     *  @param `outFile` The output XML file
      */
-    XMLGenerator ();
+    XMLGenerator (string & outFile);
 
 
     /**
@@ -61,12 +62,11 @@ class XMLGenerator {
      *
      *  @return The XML Document 
      */
-    XMLDoc generate (URL startURL, PageSet pages, WordIndex words);
+    void generate (URL & startURL, PageSet & pages, WordIndex & words);
 
   private:
 
-    // The generated XML document with the start URL, web pages and words
-    XMLDoc document;
+    string xmlFile;
 
     /**
      *  Performs the leg-work for the copy constructor and overloaded

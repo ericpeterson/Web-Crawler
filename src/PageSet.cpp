@@ -103,3 +103,30 @@ bool PageSet::Insert (const Page & v) {
   return Set<Page>::Insert(v);
 }
 
+
+void PageSet::traverse (BSTNode<Page>* node, ostream & stream) {
+  if (NULL == node) {
+    return;
+  }
+
+  if (NULL != node->GetLeft()) {
+    traverse(node->GetLeft(), stream);
+  }
+
+  if (NULL != node->GetRight()) {
+    traverse(node->GetRight(), stream);
+  }
+
+  stream << node->GetValue(); 
+}
+
+BSTNode<Page>* PageSet::GetRoot () const {
+  return BST<Page>::GetRoot();
+}
+
+ostream & operator << (ostream & stream, PageSet & set) {
+  set.traverse(set.GetRoot(), stream);
+  return stream;
+}
+
+

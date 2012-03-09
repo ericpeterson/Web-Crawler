@@ -1,12 +1,17 @@
 #include <string>
 #include <iostream>
 #include <cassert>
+#include <sstream>
+
 #include "Map.h"
 #include "Set.h"
 #include "Occurrence.h"
 #include "WordIndex.h"
 #include "URL.h"
 #include "BST.h"
+
+#include "StringUtil.h"
+
 using namespace std;
 
 typedef string Word;
@@ -93,7 +98,20 @@ void WordIndex::traverseOccurrences (BSTNode<Occurrence>* node, ostream & stream
     traverseOccurrences(node->GetRight(), stream);
   }
 
-  stream << node->GetValue() << endl;
+  stream << StringUtil::EncodeToXmlCopy("\t\t\t<occurrence>\n");
+  stream << StringUtil::EncodeToXmlCopy("\t\t\t\t<url>\n\t\t\t\t\t");
+  stream << StringUtil::EncodeToXmlCopy(node->GetValue().getURL().getFullURL());
+  stream << StringUtil::EncodeToXmlCopy("\n\t\t\t\t</url>\n");
+  stream << StringUtil::EncodeToXmlCopy("\t\t\t\t<count>");
+
+  // convert count (int) to a string
+  stringstream ss;
+  ss << node->GetValue().getCount();
+  string countStr(ss.str());
+  stream << StringUtil::EncodeToXmlCopy(countStr);
+  stream << StringUtil::EncodeToXmlCopy("</count>\n");
+  stream << StringUtil::EncodeToXmlCopy("\t\t\t</occurrence>\n");
+  stream << StringUtil::EncodeToXmlCopy("\t\t</word>\n");
 }
 
 
@@ -113,7 +131,10 @@ void WordIndex::traverseWords (
     traverseWords(node->GetRight(), stream);
   }
 
-  stream << node->GetValue().GetKey() << endl;
+  stream << StringUtil::EncodeToXmlCopy("\t\t<word>\n");
+  stream << StringUtil::EncodeToXmlCopy("\t\t\t<value>");
+  stream << StringUtil::EncodeToXmlCopy(node->GetValue().GetKey());
+  stream << StringUtil::EncodeToXmlCopy("</value>\n");
   traverseOccurrences(node->GetValue().GetValue().GetRoot(), stream);
 }
 

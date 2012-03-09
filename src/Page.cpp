@@ -1,8 +1,11 @@
 #include <string>
 #include <iostream>
+
 #include "URL.h"
 #include "Page.h"
+
 #include "UnitTest.h"
+#include "StringUtil.h"
 
 using namespace std;
 
@@ -109,8 +112,15 @@ Page & Page::copy (const Page & pageCopy) {
 
 
 ostream & operator << (ostream & stream, Page & page) {
-  stream << "URL: " << page.getURL().getFullURL() << endl;
-  stream << "description: " << page.getDescription() << endl;
+  stream << StringUtil::EncodeToXmlCopy("\t\t<page>\n");
+  stream << StringUtil::EncodeToXmlCopy("\t\t\t<url>\n\t\t\t");
+  stream << StringUtil::EncodeToXmlCopy(page.getURL().getFullURL());
+  stream << StringUtil::EncodeToXmlCopy("\n\t\t\t</url>\n");
+
+  stream << StringUtil::EncodeToXmlCopy("\t\t\t<description>");
+  stream << StringUtil::EncodeToXmlCopy(page.getDescription());
+  stream << StringUtil::EncodeToXmlCopy("</description>\n");
+
   return stream;
 }
 

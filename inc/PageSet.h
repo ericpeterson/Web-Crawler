@@ -2,8 +2,10 @@
 #define _PAGE_SET_H_
 
 #include <ostream>
+
 #include "Page.h"
 #include "Set.h"
+#include "BST.h"
 
 typedef int Size;
 
@@ -56,6 +58,12 @@ class PageSet : Set<Page> {
 
 
     /**
+     *  @return The root node of this PageSet
+     */
+    BSTNode<Page>* GetRoot () const;
+
+
+    /**
      *  Unit test for this class
      *
      *  @param `os` A reference to the output stream where test results will be sent
@@ -81,6 +89,15 @@ class PageSet : Set<Page> {
      */
     bool Insert (const Page & v);
 
+
+    /**
+     *  Traverse this PageSet and print values to `stream`
+     *
+     *  @param `node` The current value of PageSet
+     *  @param `stream` The output stream
+     */
+    void traverse (BSTNode<Page>* node, ostream & stream);
+
   private:
 
     // Size of this PageSet
@@ -100,6 +117,16 @@ class PageSet : Set<Page> {
      */
     void free ();
 };
+
+
+/**
+ *  Overloaded insertion operator
+ *
+ *  @param `stream` The stream where the PageSet info will be written
+ *  @param `set` The PageSet whose information will be written to `stream`
+ *  @return A reference to `stream`
+ */
+ostream & operator << (ostream & stream, PageSet & set);
 
 #endif
 
