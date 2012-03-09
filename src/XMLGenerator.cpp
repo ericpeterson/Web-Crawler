@@ -38,28 +38,28 @@ void XMLGenerator::generate (URL & startURL, PageSet & pages, WordIndex & words)
     throw CS240Exception("Could not open XML out file");
   }
 
-  of << EncodeToXmlCopy("<website>\n");
-  of << EncodeToXmlCopy("\t<startURL>\n\t\t");
+  of << ("<website>\n");
+  of << ("\t<startURL>\n\t\t");
   try {
     of << EncodeToXmlCopy(startURL.getFullURL());
   } catch (CS240Exception & exception) {
     cout << exception.GetMessage() << endl;
   }
-  of << EncodeToXmlCopy("\n\t</startURL>\n");
+  of << ("\n\t</startURL>\n");
 
-  of << EncodeToXmlCopy("\t<pages>\n");
+  of << ("\t<pages>\n");
   of << pages; 
-  of << EncodeToXmlCopy("\t<pages>\n");
+  of << ("\t</pages>\n");
 
-  of << EncodeToXmlCopy("\t<index>\n");
+  of << ("\t<index>\n");
 
   try {
     of << words;
   } catch (CS240Exception & exception) {
     cout << exception.GetMessage() << endl;
   }
-  of << EncodeToXmlCopy("\t</index>\n");
-  of << EncodeToXmlCopy("</website>\n");
+  of << ("\t</index>\n");
+  of << ("</website>\n");
 
   of.close();
 }
