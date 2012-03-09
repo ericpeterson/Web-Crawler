@@ -93,3 +93,13 @@ bool PageSet::Test (ostream & os) {
   return success;
 }
 
+
+bool PageSet::Contains (const Page & val) const {
+  return Set<Page>::Contains(val); 
+}
+
+
+bool PageSet::Insert (const Page & v) {
+  return Set<Page>::Insert(v);
+}
+

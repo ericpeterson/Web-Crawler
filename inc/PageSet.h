@@ -63,6 +63,24 @@ class PageSet : Set<Page> {
      */
     static bool Test (ostream & os);
 
+
+    /**
+     *  Checks if a value is in this PageSet
+     *
+     *  @param `val` The value to be checked
+     *  @return true if `val` is in PageSet; false otherwise
+     */
+    bool Contains (const Page & val) const;
+
+    
+    /**
+     *  Inserts a value v into the PageSet. Duplicates are not allowed.
+     *
+     *  @param IN `v` The new value being inserted
+     *  @return true if v was added; false otherwise.
+     */
+    bool Insert (const Page & v);
+
   private:
 
     // Size of this PageSet

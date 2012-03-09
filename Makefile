@@ -13,7 +13,8 @@ LIBOBJ_FILES = $(LIBOBJ)/StringUtil.o $(LIBOBJ)/URLInputStream.o \
 SRC_OBJ = obj
 SRC_OBJ_FILES = $(SRC_OBJ)/URL.o $(SRC_OBJ)/Page.o $(SRC_OBJ)/PageQueue.o \
   $(SRC_OBJ)/PageSet.o $(SRC_OBJ)/StopWords.o $(SRC_OBJ)/Occurrence.o \
-  $(SRC_OBJ)/WordIndex.o $(SRC_OBJ)/HTMLParser.o $(SRC_OBJ)/URLFilter.o
+  $(SRC_OBJ)/WordIndex.o $(SRC_OBJ)/HTMLParser.o $(SRC_OBJ)/URLFilter.o \
+  $(SRC_OBJ)/WebCrawler.o
 
 SRC = src
 INCLUDE = inc
@@ -82,6 +83,9 @@ $(SRC_OBJ)/HTMLParser.o: $(SRC)/HTMLParser.cpp $(INCLUDE)/*.h $(LIB_INCLUDE)/*.h
 
 $(SRC_OBJ)/URLFilter.o: $(SRC)/URLFilter.cpp $(INCLUDE)/*.h $(LIB_INCLUDE)/*.h
 	g++ -o $(SRC_OBJ)/URLFilter.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/URLFilter.cpp
+
+$(SRC_OBJ)/WebCrawler.o: $(SRC)/WebCrawler.cpp $(INCLUDE)/*.h $(LIB_INCLUDE)/*.h
+	g++ -o $(SRC_OBJ)/WebCrawler.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/WebCrawler.cpp
 
 $(SRC_OBJ)/testDriver.o: $(SRC)/testDriver.cpp $(INCLUDE)/* $(LIB_INCLUDE)/UnitTest.h
 	g++ -o $(SRC_OBJ)/testDriver.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/testDriver.cpp

@@ -25,7 +25,7 @@ class LLNode {
     }
 
     //!  Read-only public methods for use by clients of the LinkedList class
-    const Type & GetValue() const {
+    Type & GetValue() {
       return value;
     }
 

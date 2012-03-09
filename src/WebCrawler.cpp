@@ -1,93 +1,35 @@
 #include <string>
+#include <iostream>
+
 #include "URL.h"
-#include "Status.h"
-#include "URLInputStream.h"
 #include "HTMLParser.h"
+#include "PageSet.h"
+#include "PageQueue.h"
 #include "Page.h"
+#include "WordIndex.h"
+#include "WebCrawler.h"
+
+#include "URLInputStream.h"
+#include "UnitTest.h"
+
+using namespace std;
 
 typedef string FileName;
 
 
-WebCrawler::WebCrawler (URL start) : 
-    startURL(start), unprocessedPages(new PageQueue())
-  , processedPages(new PageSet()), stopWords(new StopWords())
-  , wordIndex(new WordIndex()) 
-  {}
+WebCrawler::WebCrawler () : processedPages(PageSet()), wordIndex(WordIndex()) {}
 
 
-WebCrawler::~WebCrawler () {
-  free();
-}
+WebCrawler::WebCrawler (const WebCrawler & wcCopy) : 
+  processedPages(wcCopy.processedPages), wordIndex(wcCopy.wordIndex) {}
+
+
+WebCrawler::~WebCrawler () {}
     
-
-WebCrawler::WebCrawler (const WebCrawler & wcCopy) {
-  copy(wcCopy);
-}
-
 
 WebCrawler & WebCrawler::operator = (const WebCrawler & wcCopy) {
-  free();
-  return copy(wcCopy);
-}
-
-
-Status WebCrawler::crawl () {
-  Page currentPage;
-  URL currentURL;
-  URL baseURL;
-  bool startURLFound = false;
-  StopWords stopWords("stopwords file");
-
-  while (!unprocessedPages.isEmpty()) {
-
-    // Select a page that has not been indexed
-    currentPage = unprocessedPages.dequeue();
-    currentURL = currentPage.getURL();
-
-    if (!startURLFound) {
-      baseURL = currentURL;
-      startURLFound = true;
-    }
-
-    // Make sure the url is a valid html page (HTML vs. non-HTML files) and in correct scope
-    // URL's in queue are assumed to be valid
-
-
-    // Download selected page
-    URLInputStream documentStream(currentURL.getURLString());
-    
-    // For all text areas in the page, parse out all of the words
-    HTMLParser htmlParser(documentStream, baseURL.getFullURL(), currentURL.getFullURL(), stopWords);
-    htmlParser.parse();
- 
-    // For all <A> tags with HREF attributes, add the URLs in the HREF attributes
-    // to the set of pages that still need to be indexed (but only if they're HTML
-    // files with the same prefix as the start URL)
-    LinksList hrefLinks = htmlParser.getLinks();
-    while (!hrefLinks.hasNext()) {
-      unprocessedPages.enqueue(hrefLinks.next());
-    }
-
-    // Save summary information for the page
-    currentPage.setDescription(htmlParser.getDescription());
-    currentPage.setWords(htmlParser.getWords());
-    
-    visitedPages.add(currentPage);
-
-    documentStream.Close();
-    delete documentStream;
-
-    // Repeat until there are no pages left to index
-  }
-}
-
-
-WebCrawler & WebCrawler::copy (const WebCrawler & wcCopy) {
   if (this != &wcCopy) {
-    startURL = wcCopy.startURL;
-    unprocessedPages = wcCopy.unprocessedPages;
     processedPages = wcCopy.processedPages;
-    stopWords = wcCopy.stopWords;
     wordIndex = wcCopy.wordIndex;
   }
 
@@ -95,9 +37,54 @@ WebCrawler & WebCrawler::copy (const WebCrawler & wcCopy) {
 }
 
 
-void WebCrawler::free () {
-  delete unprocessedPages;
-  delete processedPages;
-  delete stopWords;
-  delete wordIndex;
+void WebCrawler::crawl (URL & startURL, FileName & output, FileName & stopWord) {
+  // Initialize the queue with the start page
+  string startURLStr = startURL.getFullURL();
+  Page startPage(startURLStr);
+  PageQueue unprocessedPages;
+  unprocessedPages.enqueue(startPage);
+
+  while (!unprocessedPages.isEmpty()) {
+
+    // Select a page that has not been indexed
+    Page currentPage = unprocessedPages.dequeue();
+    URL currentURL = currentPage.getURL();
+
+    // Check the processed pages. If we already did it, move on to the next page
+    // in the queue
+    bool alreadyProcessed = processedPages.Contains(currentPage);
+    if (alreadyProcessed) {
+      continue;
+    }
+
+    // Download selected page
+    string currentURLStr = currentURL.getFullURL();
+    URLInputStream document(currentURLStr);
+    
+    // For all text areas in the page, parse out all of the words
+    HTMLParser htmlParser(startURLStr, stopWord);
+    string description;
+    htmlParser.parse(
+        currentURLStr
+      , document
+      , description
+      , this->wordIndex
+      , unprocessedPages
+    );
+ 
+    // Save summary information for the page
+    currentPage.setDescription(description);
+    this->processedPages.Insert(currentPage); 
+
+    document.Close();
+
+    // Repeat until there are no pages left to index
+  }
 }
+
+
+bool WebCrawler::Test (ostream & os) {
+  bool success = true;
+  return success;
+}
+

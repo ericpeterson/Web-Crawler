@@ -14,6 +14,7 @@
 #include "Occurrence.h"
 #include "HTMLParser.h"
 #include "URLFilter.h"
+#include "WebCrawler.h"
 using namespace std;
 
 
@@ -81,6 +82,9 @@ int main (int argc, char* argv[]) {
   evaluateSuccess(testResult, success);
 
   testResult = URLFilter::Test(cout);
+  evaluateSuccess(testResult, success);
+
+  testResult = WebCrawler::Test(cout);
   evaluateSuccess(testResult, success);
 
   if (true == success) {
