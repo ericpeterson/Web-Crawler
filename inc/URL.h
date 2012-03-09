@@ -108,7 +108,7 @@ class URL {
      *
      *  @return true if the minimum requirements are met; false otherwise
      */
-    static bool checkIfValid (string url);
+    static bool checkIfValid (string & url);
 
   private:
 

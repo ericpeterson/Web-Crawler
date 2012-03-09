@@ -50,6 +50,7 @@ Status WebCrawler::crawl () {
     }
 
     // Make sure the url is a valid html page (HTML vs. non-HTML files) and in correct scope
+    // URL's in queue are assumed to be valid
 
 
     // Download selected page

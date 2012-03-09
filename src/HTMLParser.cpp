@@ -2,17 +2,21 @@
 #include <iostream>
 #include <cctype>
 #include <cassert>
-#include "URLInputStream.h"
-#include "StringUtil.h"
+
 #include "WordIndex.h"
 #include "Queue.h"
 #include "Page.h"
-#include "HTMLTokenizer.h"
-#include "HTMLToken.h"
 #include "HTMLParser.h"
 #include "StopWords.h"
 #include "Occurrence.h"
+#include "URLFilter.h"
+
 #include "UnitTest.h"
+#include "URLInputStream.h"
+#include "StringUtil.h"
+#include "HTMLTokenizer.h"
+#include "HTMLToken.h"
+
 using namespace std;
 
 typedef Queue<Page> LinksList;
@@ -87,8 +91,9 @@ void HTMLParser::parse (string & currentURL, URLInputStream & document,
         // links
         if ("a" == currentTag && inHTML) {
           string href = currentToken.GetAttribute("href");
-          bool isAcceptable = true;
-          //bool isAcceptable = URLFilter::filter(href);
+          URL base = URL(this->baseURL);
+          URLFilter filter(base);
+          bool isAcceptable = filter.filter(currentURL);
           if (isAcceptable) {
             bool isAbsolute = URL::checkIfValid(href);
             if (isAbsolute) {
@@ -217,8 +222,8 @@ bool HTMLParser::Test (ostream & os) {
   const int WORD_COUNT = 45; 
   TEST(words.GetSize() == WORD_COUNT);
 
-  cout << words << endl;
-  cout << unprocessedPages << endl;
+  //cout << words << endl;
+  //cout << unprocessedPages << endl;
 
   document.Close();
 

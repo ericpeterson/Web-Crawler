@@ -13,6 +13,7 @@
 #include "WordIndex.h"
 #include "Occurrence.h"
 #include "HTMLParser.h"
+#include "URLFilter.h"
 using namespace std;
 
 
@@ -77,6 +78,9 @@ int main (int argc, char* argv[]) {
   evaluateSuccess(testResult, success);
 
   testResult = HTMLParser::Test(cout);
+  evaluateSuccess(testResult, success);
+
+  testResult = URLFilter::Test(cout);
   evaluateSuccess(testResult, success);
 
   if (true == success) {

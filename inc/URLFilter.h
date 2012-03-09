@@ -1,7 +1,12 @@
 #ifndef _URL_FILTER_H_
 #define _URL_FILTER_H_
 
+#include <string>
+#include <iostream>
+
 #include "URL.h"
+
+using namespace std;
 
 /**
  *  Filters URLs before they are added to the processed pages collection.
@@ -20,33 +25,11 @@ class URLFilter {
   public:
 
     /**
-     *  Default constructor
-     */
-    URLFilter ();
-
-
-    /**
-     *  Destructor
-     */
-    ~URLFilter ();
-
-
-    /**
-     *  Copy constructor
+     *  Overloaded constructor
      *
-     *  @param ufCopy The URLFilter object to be copied
+     *  @param IN `startURL` The starting web site of the crawler
      */
-    URLFilter (const URLFilter & ufCopy);
-
-
-    /**
-     *  Overloaded assignment operator
-     *  
-     *  @param ufCopy The URLFilter object to be copied
-     *
-     *  @return A reference to this URLFilter object
-     */
-    URLFilter & operator = (const URLFilter & ufCopy);
+    URLFilter (URL & start);
 
 
     /**
@@ -57,23 +40,30 @@ class URLFilter {
      *  @return true if url is in the scope of the starting web site, is valid
      *          html and has not been indexed previously; false otherwise 
      */
-    static bool filter (string & url);
+    bool filter (const URL & url);
+
+
+    /**
+     *  Unit test for this class
+     *
+     *  @param `os` The output stream
+     *  @return true if all tests pass; false otherwise
+     */
+    static bool Test (ostream & os);
 
   private:
 
+    // The start website for the web crawler
+    URL startURL;
+
+
     /**
-     *  Performs the leg-work for the copy constructor and assignment operator
-     *  @param ufCopy The URLFilter object to be copied
+     *  Checks if `fileName` has a specific extension
      *
-     *  @return A reference to this URLFilter
+     *  @param `fileName` The file whose extension we are examining
+     *  @return true if `fileName` contains a specific extension; false otherwise
      */
-    URLFilter & copy (const URLFilter & ufCopy);
-
-
-    /**
-     *  Deallocates heap memory used by this URLFilter
-     */
-    void free ();
+    bool checkExtension (string & fileName);
 };
 
 #endif

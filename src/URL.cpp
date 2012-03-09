@@ -129,7 +129,7 @@ void URL::removeFragment (string & Url) {
 }
 
 
-bool URL::checkIfValid (string url) {
+bool URL::checkIfValid (string & url) {
   string scheme;
   Index start = 0;
   Index schemeLength = 7;
