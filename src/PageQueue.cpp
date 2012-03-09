@@ -1,12 +1,13 @@
 #include "PageQueue.h"
 #include "Page.h"
 #include "Queue.h"
+#include "LinkedList.h"
 #include "UnitTest.h"
 
 typedef int Size;
 
 
-PageQueue::PageQueue () : Queue<Page>::Queue() {}
+PageQueue::PageQueue () : Queue<Page>::Queue(), size(0) {}
 
 
 PageQueue::~PageQueue () {
@@ -14,7 +15,7 @@ PageQueue::~PageQueue () {
 }
 
 
-PageQueue::PageQueue (const PageQueue & pqCopy) {
+PageQueue::PageQueue (const PageQueue & pqCopy) : size(pqCopy.size) {
   copy(pqCopy);
 }
 
@@ -22,6 +23,16 @@ PageQueue::PageQueue (const PageQueue & pqCopy) {
 PageQueue & PageQueue::operator = (const PageQueue & pqCopy) {
   free();
   return copy(pqCopy);
+}
+
+
+ostream & operator << (ostream & stream, PageQueue & queue) {
+  while (!queue.isEmpty()) {
+    Page currentPage = queue.dequeue();
+    stream << currentPage << endl;
+  }
+
+  return stream;
 }
 
 

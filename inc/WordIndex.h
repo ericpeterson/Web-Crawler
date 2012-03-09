@@ -52,6 +52,10 @@ class WordIndex : Map<Word, OccurrenceSet> {
     WordIndex & operator = (const WordIndex & wiCopy);
 
 
+    // Getter for `size`
+    int GetSize ();
+
+
     /**
      *  Inserts a new occurrence of a Word into the index
      *
@@ -70,6 +74,32 @@ class WordIndex : Map<Word, OccurrenceSet> {
      */
     static bool Test (ostream & os);
 
+
+    /**
+     *  Traverse the Set of occurrences recursively
+     *
+     *  @param `node` The current node in the Set
+     *  @param OUT `stream` The stream where the word index will be written
+     */
+    void traverseOccurrences (BSTNode<Occurrence>* node, ostream & stream);
+
+
+    /**
+     *  Traverse this Word index of recursively and print elements to `stream`
+     *
+     *  @param `node` The current node in the Set
+     *  @param OUT `stream` The stream where the word index will be written
+     */
+    void traverseWords (BSTNode< MapNode<string, OccurrenceSet> >* node, ostream & stream);
+
+
+    /**
+     *  Begins traversing this Word index
+     *
+     *  @param OUT `stream` The stream where the word index will be written
+     */
+    void traverse (ostream & stream);
+
   private:
 
     /**
@@ -87,6 +117,15 @@ class WordIndex : Map<Word, OccurrenceSet> {
      */
     void free ();
 };
+
+
+/**
+ *  Overloaded insertion operator
+ *
+ *  @param `stream` The stream associated with the insertion operator
+ *  @param `index` The WordIndex object to write to `stream`
+ */
+ostream & operator << (ostream & stream, WordIndex & index);
 
 #endif
 

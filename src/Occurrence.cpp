@@ -77,6 +77,13 @@ bool Occurrence::Test (ostream & os) {
 }
 
 
+ostream & operator << (ostream & stream, Occurrence & occurrence) {
+  stream << "(" << occurrence.getCount() << ", " << 
+    occurrence.getURL().getFullURL() << ")" << endl;
+  return stream;
+}
+
+
 Occurrence & Occurrence::copy (const Occurrence & oCopy) {
   if (this != &oCopy) {
     url = oCopy.url;

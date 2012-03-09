@@ -1,6 +1,7 @@
 #ifndef _PAGE_QUEUE_H_
 #define _PAGE_QUEUE_H_
 
+#include <iostream>
 #include "Page.h"
 #include "Queue.h"
 
@@ -86,11 +87,13 @@ class PageQueue : Queue<Page> {
      */
     static bool Test (ostream & os);
 
-    private:
+
+  private:
 
       // The number of elements in this PageQueue. Useful for determining if
       // the queue is empty.
       Size size;
+
 
       /**
        *  Performs the leg-word for the copy constructor and the overloaded
@@ -108,5 +111,14 @@ class PageQueue : Queue<Page> {
        */
       void free ();
 };
+
+
+/**
+ *  Overloaded insertion operator
+ *
+ *  @param `stream` The output stream where the Page info will be sent
+ *  @param `queue` The PageQueue to be traversed 
+ */
+ostream & operator << (ostream & stream, PageQueue & queue);
 
 #endif

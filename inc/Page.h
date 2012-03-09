@@ -88,6 +88,13 @@ class Page {
     static bool Test (ostream & os);
 
 
+    // Getter for `url`
+    URL & getURL ();
+
+
+    // Getter for `description`
+    string & getDescription ();
+
   private:
 
     // The absolute url to this Page
@@ -111,5 +118,15 @@ class Page {
      */
     void free ();
 };
+
+
+/**
+ *  Overloaded insertion operator
+ *
+ *  @param `stream` The stream where the page info will be written
+ *  @param `page` The page whose information will be written to `stream`
+ *  @return A reference to `stream`
+ */
+ostream & operator << (ostream & stream, Page & page);
 
 #endif

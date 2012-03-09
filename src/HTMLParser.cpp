@@ -11,6 +11,7 @@
 #include "HTMLToken.h"
 #include "HTMLParser.h"
 #include "StopWords.h"
+#include "Occurrence.h"
 #include "UnitTest.h"
 using namespace std;
 
@@ -18,19 +19,15 @@ typedef Queue<Page> LinksList;
 typedef string Description;
 typedef string Tag;
 typedef int Size;
-
-HTMLParser::HTMLParser () : 
-    description(""), currentURL(""), baseURL(""), words(WordIndex()), 
-    stopWords(StopWords("")), links(LinksList()), document(NULL) {}
+typedef Set<Occurrence> OccurrenceSet;
 
 
-HTMLParser::HTMLParser (
-    URLInputStream & input
-  , string & base
-  , string & current
-  , StopWords & stop
-) : description(""), currentURL(current), baseURL(base), words(WordIndex())
-  , stopWords(stop), links(LinksList()), document(&input) {}
+HTMLParser::HTMLParser (string & base, string & stopFile) : 
+  baseURL(base), stopWords(stopFile.c_str()) {}
+
+
+HTMLParser::HTMLParser (string & base, const char* stopFile) : 
+  baseURL(base), stopWords(stopFile) {}
 
 
 HTMLParser::~HTMLParser () {
@@ -38,19 +35,26 @@ HTMLParser::~HTMLParser () {
 }
 
 
-HTMLParser::HTMLParser (const HTMLParser & hpCopy) : stopWords(StopWords("")) {
-  copy(hpCopy);
-}
+HTMLParser::HTMLParser (const HTMLParser & hpCopy) : 
+  baseURL(hpCopy.baseURL), stopWords(hpCopy.stopWords) {}
 
 
 HTMLParser & HTMLParser::operator = (const HTMLParser & hpCopy) {
   free();
-  return copy(hpCopy);
+
+  if (this != &hpCopy) {
+    baseURL = hpCopy.baseURL;
+    stopWords = hpCopy.stopWords;
+  }
+
+  return *this;
 }
 
 
-void HTMLParser::parse () {
-  HTMLTokenizer tokenizer(document);
+void HTMLParser::parse (string & currentURL, URLInputStream & document,
+  Description & description, WordIndex & words, PageQueue unprocessedPages) {
+
+  HTMLTokenizer tokenizer(&document);
   Tag currentTag;
   const Size numIgnoreTags = 1; 
   Tag ignoreTags[numIgnoreTags] = {"script"};
@@ -111,9 +115,9 @@ void HTMLParser::parse () {
           string href = currentToken.GetAttribute("href");
           bool isAbsolute = URL::checkIfValid(href);
           if (isAbsolute) {
-            links.push(Page(href));
+            unprocessedPages.enqueue(Page(href));
           } else {
-            links.push(Page(baseURL, href, ""));
+            unprocessedPages.enqueue(Page(baseURL, href, ""));
           }
         }
 
@@ -185,59 +189,32 @@ bool HTMLParser::isWordCharacter (char character) {
 }
 
 
-Description & HTMLParser::getDescription () {
-  return description;
-}
-
-
-WordIndex & HTMLParser::getWords () {
-  return words;
-}
-
-
-LinksList & HTMLParser::getLinks () {
-  return links;
-}
-
-
-HTMLParser & HTMLParser::copy (const HTMLParser & hpCopy) {
-  if (this != &hpCopy) {
-    description = hpCopy.description;
-    baseURL = hpCopy.baseURL;
-    currentURL = hpCopy.currentURL;
-    words = hpCopy.words;
-    stopWords = hpCopy.stopWords;
-    links = hpCopy.links;
-    document = hpCopy.document;
-  }
-
-  return *this;
-}
-
-
 void HTMLParser::free () {}
 
 
 bool HTMLParser::Test (ostream & os) {
   bool success = true;
-  string base = "file:///home/eric/school/Web-Crawler/test/";
 
-  StopWords stopWords("test/stopWords.txt");
-  URLInputStream stream("file:///home/eric/school/Web-Crawler/test/test.html");
-  HTMLParser parser(stream, base, base, stopWords);
-  parser.parse();
-  TEST(parser.description == "Whatisthemeaningoflife?Well,Iwouldsaythatthemeaningoflifebeginsatbirth.Sometimesthedoctorsgetconfuse");
-  //TEST(parser.description == "Hello there");
-  //TEST(parser.description == "This is it!");
+  string base = "file:///home/eric/school/Web-Crawler/test/start.html";
+  string stopFile = "test/stopWords.txt";
+  HTMLParser parser(base, stopFile);
 
-  URLInputStream stream2("file:///home/eric/school/Web-Crawler/test/test2.html");
-  HTMLParser parser2(stream2, base, base, stopWords);
-  parser2.parse();
-  cout << parser2.description << endl;
-  TEST(parser2.description == "");
+  string currentURL = "file:///home/eric/school/Web-Crawler/test/test.html";
+  URLInputStream document(currentURL);
+  string description;
+  WordIndex words;
+  PageQueue unprocessedPages;
+  parser.parse(currentURL, document, description, words, unprocessedPages);
 
-  stream.Close();
-  stream2.Close();
+  TEST(description == "Hello there");
+
+  const int WORD_COUNT = 41; 
+  TEST(words.GetSize() == WORD_COUNT);
+
+  cout << words << endl;
+  cout << unprocessedPages << endl;
+
+  document.Close();
 
   return success;
 }

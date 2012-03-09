@@ -5,13 +5,9 @@
 #include <string>
 #include "URLInputStream.h"
 #include "WordIndex.h"
-#include "Queue.h"
-#include "Page.h"
+#include "PageQueue.h"
 #include "StopWords.h"
-#include "UnitTest.h"
 using namespace std;
-
-typedef Queue<Page> LinksList;
 
 typedef string Description;
 
@@ -26,20 +22,17 @@ typedef string Description;
 class HTMLParser {
   public:
 
-    /**
-     *  Default constructor
-     */
-    HTMLParser ();
-
 
     /**
      *  Initializes an HTMLParser object with an already downloaded HTML stream
-     *  @param IN `input` The stream from the downloaded page.
-     *  @param IN `base` The base URL
-     *  @param IN `Url` The current URL being parsed
-     *  @param IN `stop` The list of stop words
+     *  @param IN `base` The base URL of the Web Crawler
+     *  @param IN `stopFile` The file name of the stop words
      */
-    HTMLParser (URLInputStream & input, string & base, string & Url, StopWords & stop);
+    HTMLParser (string & base, string & stopFile);
+
+
+    // Alternate version of constructor
+    HTMLParser (string & base, const char* stopFile);
 
 
     /**
@@ -68,26 +61,21 @@ class HTMLParser {
 
     /**
      *  Parses the HTML document into a description, words and links
+     *
+     *  @param IN `currentURL` The current URL being parsed
+     *  @param IN `document` A stream of the html document to be parsed
+     *  @param OUT `description` The description of the current web page. Used
+     *    in the XML output.
+     *  @param OUT `words` The continuing word index for the web crawler
+     *  @param OUT `unprocessedPages` A list of pages that have not been indexed
      */
-    void parse ();
-
-
-    /**
-     *  Getter for description
-     */
-    Description & getDescription ();
-
-
-    /**
-     *  Getter for words
-     */
-    WordIndex & getWords ();
-
-
-    /**
-     *  Getter for links
-     */
-    LinksList & getLinks ();
+    void parse (
+        string & currentURL
+      , URLInputStream & document 
+      , Description & description
+      , WordIndex & words
+      , PageQueue unprocessedPages
+    );
 
 
     /**
@@ -100,28 +88,11 @@ class HTMLParser {
 
   private:
 
-    // Web page description used in XML output
-    Description description;
-
-    // Current URL being parsed
-    string currentURL;
-
     // Base URL for the webcrawler
     string baseURL;
 
-    // Indexed words use in XML output
-    WordIndex words;
-
     // Words that should not be indexed
     StopWords stopWords;
-
-    // Links to potentially unprocessed pages. Pages from this collection will
-    // be indexed if they have not been indexed before.
-    LinksList links;
-
-
-    // A stream of the html document to be parsed
-    URLInputStream* document;
 
 
     /**
@@ -131,15 +102,6 @@ class HTMLParser {
      *  @return true if `character` is a word character; false otherwise
      */
     static bool isWordCharacter (char character);
-
-
-    /**
-     *  Performs the leg-work for the copy constructor and assignment operator
-     *  @param hpCopy The HTMLParser object to be copied
-     *
-     *  @return A reference to this HTMLParser
-     */
-    HTMLParser & copy (const HTMLParser & hpCopy);
 
 
     /**

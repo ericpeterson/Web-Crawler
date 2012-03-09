@@ -4,6 +4,9 @@
 #include <iostream>
 #include "URL.h"
 
+
+
+
 class Occurrence {
   public:
 
@@ -83,5 +86,14 @@ class Occurrence {
     // Deallocate heap memory used by this Occurrence
     void free ();
 };
+
+
+/**
+ *  Overloaded insertion operator
+ *
+ *  @param `stream` The stream associated with the insertion operator
+ *  @param `occurrence` The Occurrence object to write to `stream`
+ */
+ostream & operator << (ostream & stream, Occurrence & occurrence);
 
 #endif

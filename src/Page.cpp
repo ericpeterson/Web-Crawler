@@ -88,6 +88,16 @@ bool Page::Test (ostream & os) {
 }
 
 
+URL & Page::getURL() {
+  return url;
+}
+
+
+string & Page::getDescription () {
+  return description;
+}
+
+
 Page & Page::copy (const Page & pageCopy) {
   if (this != &pageCopy) {
     this->url = pageCopy.url;
@@ -95,6 +105,13 @@ Page & Page::copy (const Page & pageCopy) {
   }
 
   return *this;
+}
+
+
+ostream & operator << (ostream & stream, Page & page) {
+  stream << "URL: " << page.getURL().getFullURL() << endl;
+  stream << "description: " << page.getDescription() << endl;
+  return stream;
 }
 
 

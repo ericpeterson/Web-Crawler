@@ -240,7 +240,7 @@ class MapNode {
 
 
     // returns `key` of this MapNode
-    Key & GetKey () const;
+    Key & GetKey ();
 
     // return `value` of this MapNode
     Value & GetValue () const;
@@ -290,7 +290,7 @@ bool MapNode<Key, Value>::operator < (const MapNode<Key, Value> & node) const {
 
 
 template <class Key, class Value>
-Key & MapNode<Key, Value>::GetKey () const {
+Key & MapNode<Key, Value>::GetKey () {
   return key;
 }
 

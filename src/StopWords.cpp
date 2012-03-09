@@ -6,16 +6,19 @@
 #include "StopWords.h"
 #include "Set.h"
 #include "StringUtil.h"
+#include "CS240Exception.h"
 using namespace std;
 
 typedef string Word;
 
 StopWords::StopWords (const char* file) : Set<Word>::Set() {
+  assert(NULL != file);
+
   ifstream stream(file);
   string currentWord;
 
   if (!stream.is_open()) {
-    // There's a problem
+    throw CS240Exception("Stop words file did not open correctly");
   }
 
   while (stream.good()) {
@@ -51,6 +54,13 @@ bool StopWords::Contains (string & word) const {
   StringUtil::ToLower(word);
   return Set<Word>::Contains(word);
 }
+
+
+bool StopWords::Contains (const char* word) const {
+  string wordStr(word);
+  return StopWords::Contains(wordStr);
+}
+
 
 bool StopWords::Test (ostream & os) {
   bool success = true;

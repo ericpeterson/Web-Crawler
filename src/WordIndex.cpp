@@ -37,6 +37,11 @@ WordIndex & WordIndex::copy (const WordIndex & wiCopy) {
 }
 
 
+int WordIndex::GetSize () {
+  return BST< MapNode<Word, OccurrenceSet> >::GetSize();
+}
+
+
 void WordIndex::free () {
   Map<Word, OccurrenceSet>::free();
 }
@@ -72,6 +77,55 @@ void WordIndex::Insert (const Word & word, const URL & url) {
 
     Map<Word, OccurrenceSet>::Insert(word, set);
   }
+}
+
+
+void WordIndex::traverseOccurrences (BSTNode<Occurrence>* node, ostream & stream) {
+  if (NULL == node) {
+    return;
+  }
+
+  if (NULL != node->GetLeft()) {
+    traverseOccurrences(node->GetLeft(), stream);
+  }
+
+  if (NULL != node->GetRight()) {
+    traverseOccurrences(node->GetRight(), stream);
+  }
+
+  stream << node->GetValue() << endl;
+}
+
+
+void WordIndex::traverseWords (
+    BSTNode< MapNode<string, OccurrenceSet> >* node
+  , ostream & stream
+) {
+  if (NULL == node) {
+    return;
+  }
+
+  if (NULL != node->GetLeft()) {
+    traverseWords(node->GetLeft(), stream);
+  }
+  
+  if (NULL != node->GetRight()) {
+    traverseWords(node->GetRight(), stream);
+  }
+
+  stream << node->GetValue().GetKey() << endl;
+  traverseOccurrences(node->GetValue().GetValue().GetRoot(), stream);
+}
+
+
+void WordIndex::traverse (ostream & stream) {
+  traverseWords(GetRoot(), stream);
+}
+
+
+ostream & operator << (ostream & stream, WordIndex & index) {
+  index.traverse(stream);
+  return stream;
 }
 
 

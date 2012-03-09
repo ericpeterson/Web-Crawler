@@ -19,7 +19,7 @@ class StopWords : public Set<Word> {
   public:
 
     /**
-     *  Default constructor
+     *  Overloaded constructor
      *
      *  @param IN `file` The file containing the stop words
      */
@@ -67,6 +67,9 @@ class StopWords : public Set<Word> {
      *  @return true if the word is in the list; false otherwise
      */
     bool Contains (string & word) const;
+
+    // Overloaded Contains()
+    bool Contains (const char* word) const;
 
   private:
 
