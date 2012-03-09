@@ -12,9 +12,20 @@ using namespace std;
 URLFilter::URLFilter (URL & start) : startURL(start) {}
 
 
+bool URLFilter::isInScope (string & start, string & other) {
+  size_t lengthStart = start.length();
+  string substrOther = other.substr(0, lengthStart);
+  
+  return substrOther == start;
+}
+
+
 bool URLFilter::filter (const URL & url) {
+  string startPrefix = this->startURL.getPrefix();
+  string urlPrefix = url.getPrefix(); 
+  bool inScope = isInScope(startPrefix, urlPrefix);
   // check scope -- we stop here if out of scope
-  if (url.getPrefix() != this->startURL.getPrefix()) {
+  if (!inScope) {
     return true;
   }
 

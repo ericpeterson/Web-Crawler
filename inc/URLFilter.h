@@ -44,6 +44,17 @@ class URLFilter {
 
 
     /**
+     *  Determines if one url is in the scope of another. It is important that both
+     *  `start` and `other` be PREFIXES of URLs and not full URLs
+     *  
+     *  @param `start` This url's scope is the standard
+     *  @param `other` We are checking this one's scope to see if it matches `start`
+     *  @return true if `other` is in `start's` scope; false otherwise
+     */  
+    bool isInScope (string & start, string & other);
+
+
+    /**
      *  Unit test for this class
      *
      *  @param `os` The output stream
