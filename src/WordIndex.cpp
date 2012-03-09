@@ -11,6 +11,7 @@
 #include "BST.h"
 
 #include "StringUtil.h"
+#include "CS240Exception.h"
 
 using namespace std;
 
@@ -100,15 +101,23 @@ void WordIndex::traverseOccurrences (BSTNode<Occurrence>* node, ostream & stream
 
   stream << StringUtil::EncodeToXmlCopy("\t\t\t<occurrence>\n");
   stream << StringUtil::EncodeToXmlCopy("\t\t\t\t<url>\n\t\t\t\t\t");
-  stream << StringUtil::EncodeToXmlCopy(node->GetValue().getURL().getFullURL());
+  try {
+    stream << StringUtil::EncodeToXmlCopy(node->GetValue().getURL().getFullURL());
+  } catch (CS240Exception & exception) {
+    cout << exception.GetMessage() << endl;
+  }
   stream << StringUtil::EncodeToXmlCopy("\n\t\t\t\t</url>\n");
   stream << StringUtil::EncodeToXmlCopy("\t\t\t\t<count>");
 
   // convert count (int) to a string
-  stringstream ss;
-  ss << node->GetValue().getCount();
-  string countStr(ss.str());
-  stream << StringUtil::EncodeToXmlCopy(countStr);
+  try {
+    stringstream ss;
+    ss << node->GetValue().getCount();
+    string countStr(ss.str());
+    stream << StringUtil::EncodeToXmlCopy(countStr);
+  } catch (CS240Exception & exception) {
+    cout << exception.GetMessage() << endl;
+  }
   stream << StringUtil::EncodeToXmlCopy("</count>\n");
   stream << StringUtil::EncodeToXmlCopy("\t\t\t</occurrence>\n");
   stream << StringUtil::EncodeToXmlCopy("\t\t</word>\n");
@@ -133,7 +142,11 @@ void WordIndex::traverseWords (
 
   stream << StringUtil::EncodeToXmlCopy("\t\t<word>\n");
   stream << StringUtil::EncodeToXmlCopy("\t\t\t<value>");
-  stream << StringUtil::EncodeToXmlCopy(node->GetValue().GetKey());
+  try {
+    stream << StringUtil::EncodeToXmlCopy(node->GetValue().GetKey());
+  } catch (CS240Exception & exception) {
+    cout << exception.GetMessage() << endl;
+  }
   stream << StringUtil::EncodeToXmlCopy("</value>\n");
   traverseOccurrences(node->GetValue().GetValue().GetRoot(), stream);
 }

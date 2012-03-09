@@ -6,6 +6,7 @@
 
 #include "UnitTest.h"
 #include "StringUtil.h"
+#include "CS240Exception.h"
 
 using namespace std;
 
@@ -114,11 +115,19 @@ Page & Page::copy (const Page & pageCopy) {
 ostream & operator << (ostream & stream, Page & page) {
   stream << StringUtil::EncodeToXmlCopy("\t\t<page>\n");
   stream << StringUtil::EncodeToXmlCopy("\t\t\t<url>\n\t\t\t");
-  stream << StringUtil::EncodeToXmlCopy(page.getURL().getFullURL());
+  try {
+    stream << StringUtil::EncodeToXmlCopy(page.getURL().getFullURL());
+  } catch (CS240Exception & exception) {
+    cout << exception.GetMessage() << endl;
+  }
   stream << StringUtil::EncodeToXmlCopy("\n\t\t\t</url>\n");
 
   stream << StringUtil::EncodeToXmlCopy("\t\t\t<description>");
-  stream << StringUtil::EncodeToXmlCopy(page.getDescription());
+  try {
+    stream << StringUtil::EncodeToXmlCopy(page.getDescription());
+  } catch (CS240Exception & exception) {
+    cout << exception.GetMessage() << endl;
+  }
   stream << StringUtil::EncodeToXmlCopy("</description>\n");
 
   return stream;

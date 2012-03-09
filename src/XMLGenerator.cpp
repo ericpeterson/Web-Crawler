@@ -40,18 +40,26 @@ void XMLGenerator::generate (URL & startURL, PageSet & pages, WordIndex & words)
 
   of << EncodeToXmlCopy("<website>\n");
   of << EncodeToXmlCopy("\t<startURL>\n\t\t");
-  of << EncodeToXmlCopy(startURL.getFullURL());
+  try {
+    of << EncodeToXmlCopy(startURL.getFullURL());
+  } catch (CS240Exception & exception) {
+    cout << exception.GetMessage() << endl;
+  }
   of << EncodeToXmlCopy("\n\t</startURL>\n");
 
   of << EncodeToXmlCopy("\t<pages>\n");
   of << pages; 
   of << EncodeToXmlCopy("\t<pages>\n");
 
-  of << "\t<index>\n";
+  of << EncodeToXmlCopy("\t<index>\n");
 
-  of << words;
-  of << "\t</index>\n";
-  of << "</website>\n";
+  try {
+    of << words;
+  } catch (CS240Exception & exception) {
+    cout << exception.GetMessage() << endl;
+  }
+  of << EncodeToXmlCopy("\t</index>\n");
+  of << EncodeToXmlCopy("</website>\n");
 
   of.close();
 }
