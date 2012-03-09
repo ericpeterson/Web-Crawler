@@ -52,7 +52,7 @@ HTMLParser & HTMLParser::operator = (const HTMLParser & hpCopy) {
 
 
 void HTMLParser::parse (string & currentURL, URLInputStream & document,
-  Description & description, WordIndex & words, PageQueue unprocessedPages) {
+  Description & description, WordIndex & words, PageQueue & unprocessedPages) {
 
   HTMLTokenizer tokenizer(&document);
   Tag currentTag;
@@ -81,8 +81,24 @@ void HTMLParser::parse (string & currentURL, URLInputStream & document,
           inHTML = (currentTag == "html");
         }
         if (!inTitle) {
-          inTitle = (currentTag == "html");
+          inTitle = (currentTag == "title");
         }
+
+        // links
+        if ("a" == currentTag && inHTML) {
+          string href = currentToken.GetAttribute("href");
+          bool isAcceptable = true;
+          //bool isAcceptable = URLFilter::filter(href);
+          if (isAcceptable) {
+            bool isAbsolute = URL::checkIfValid(href);
+            if (isAbsolute) {
+              unprocessedPages.enqueue(Page(href));
+            } else {
+              unprocessedPages.enqueue(Page(baseURL, href, ""));
+            }
+          }
+        }
+
         break;
       case TAG_END:
         currentTag.clear();
@@ -109,16 +125,6 @@ void HTMLParser::parse (string & currentURL, URLInputStream & document,
 
         if (true == ignoreCurrentTag) {
           break;
-        }
-
-        if ("a" == currentTag && inHTML) {
-          string href = currentToken.GetAttribute("href");
-          bool isAbsolute = URL::checkIfValid(href);
-          if (isAbsolute) {
-            unprocessedPages.enqueue(Page(href));
-          } else {
-            unprocessedPages.enqueue(Page(baseURL, href, ""));
-          }
         }
 
         // Index words
@@ -208,7 +214,7 @@ bool HTMLParser::Test (ostream & os) {
 
   TEST(description == "Hello there");
 
-  const int WORD_COUNT = 41; 
+  const int WORD_COUNT = 45; 
   TEST(words.GetSize() == WORD_COUNT);
 
   cout << words << endl;

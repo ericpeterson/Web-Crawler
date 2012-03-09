@@ -57,7 +57,7 @@ class URLFilter {
      *  @return true if url is in the scope of the starting web site, is valid
      *          html and has not been indexed previously; false otherwise 
      */
-    bool filter (URL url);
+    static bool filter (string & url);
 
   private:
 

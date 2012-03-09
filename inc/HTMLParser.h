@@ -74,7 +74,7 @@ class HTMLParser {
       , URLInputStream & document 
       , Description & description
       , WordIndex & words
-      , PageQueue unprocessedPages
+      , PageQueue & unprocessedPages
     );
 
 
