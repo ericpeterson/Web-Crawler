@@ -104,7 +104,8 @@ void WebCrawler::printXML (FileName & output) {
 bool WebCrawler::Test (ostream & os) {
   bool success = true;
 
-  URL startURL("file:///users/guest/p/peter2/cs240/webCrawler/test/test.html");
+  string startURLStr = "file:///users/guest/p/peter2/cs240/webCrawler/test/test.html";
+  URL startURL(startURLStr);
   string stopWord = "test/stopWords.txt";
   WebCrawler crawler(startURL);
   try {

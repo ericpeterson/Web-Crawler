@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <cstdlib>
 
 #include "WebCrawler.h"
@@ -15,7 +16,8 @@ int main (int argc, char* argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  URL startURL(argv[1]);
+  string startURLStr = argv[1];
+  URL startURL(startURLStr);
   string outFile = argv[2];
   string stopWord = argv[3];
 

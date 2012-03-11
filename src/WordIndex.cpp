@@ -168,10 +168,15 @@ bool WordIndex::Test (ostream & os) {
   bool success = true;
   const int PAGES = 3;
   const int WORDS = 30;
+  string urlStrs[PAGES] = {
+      "http://www.google.com/index.html"
+    , "file:///home/file.txt"
+    , "http://www.msn.com/sports.html"
+  };
   URL urls[PAGES] = {
-      URL("http://www.google.com/index.html")
-    , URL("file:///home/file.txt")
-    , URL("http://www.msn.com/sports.html")
+      URL(urlStrs[0])
+    , URL(urlStrs[1])
+    , URL(urlStrs[2])
   };
   Word words[WORDS] = {
       "and", "the", "a", "wood", "couch", "potato", "Henry", "the", "a", "and"

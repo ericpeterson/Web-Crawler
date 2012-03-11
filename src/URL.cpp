@@ -1,7 +1,10 @@
 #include <string>
 #include <cstring>
 #include <cassert>
+#include <cctype>
+
 #include "URL.h"
+
 #include "UnitTest.h"
 using namespace std;
 
@@ -19,11 +22,13 @@ URL::URL (string absoluteURL) {
   string urlPageName = "";
   string full = absoluteURL;
 
-  bool isValidURL = checkIfValid(absoluteURL);
+  toLowerSchemeNetloc(full);
+
+  bool isValidURL = checkIfValid(full);
 
   // Only parse if absoluteURL is a valid absolute URL
   if (true == isValidURL) {
-    this->parseURL(absoluteURL, urlPrefix, urlPageName);
+    this->parseURL(full, urlPrefix, urlPageName);
   }
 
   removeFragment(urlPageName);  
@@ -37,15 +42,19 @@ URL::URL (string absoluteURL) {
 
 URL::URL (string url, string baseURL) {
   string resolvedURL(url);
+  string baseURLCopy = baseURL;
   string urlPrefix;
   string urlPageName;
+
+  toLowerSchemeNetloc(resolvedURL);
+  toLowerSchemeNetloc(baseURLCopy);
 
   /*
     We expect url to be an invalid absolute url (a relative url) and baseURL to
     be valid
   */
-  bool urlIsValid = checkIfValid(url);
-  bool baseURLIsValid = checkIfValid(baseURL);
+  bool urlIsValid = checkIfValid(resolvedURL);
+  bool baseURLIsValid = checkIfValid(baseURLCopy);
 
   /*
     Resolve the url in the normal way if the input is valid. If the base URL is
@@ -53,8 +62,8 @@ URL::URL (string url, string baseURL) {
     url and there is no need to resolve it.
   */
   if ((false == urlIsValid) && (true == baseURLIsValid)) {
-    char* relativeURLCstring = (char*)url.c_str();
-    char* baseURLCstring = (char*)baseURL.c_str();
+    char* relativeURLCstring = (char*)resolvedURL.c_str();
+    char* baseURLCstring = (char*)baseURLCopy.c_str();
 
     // Added this temp variable in to clean up a memory leak from the old url
     // resolver code
@@ -71,6 +80,7 @@ URL::URL (string url, string baseURL) {
   } else {
     // url is absolute. No need to resolve
   }
+
 
   this->parseURL(resolvedURL, urlPrefix, urlPageName);
 
@@ -102,6 +112,36 @@ bool URL::operator != (const URL & uCopy) {
   string otherURL = uCopy.getFullURL();
 
   return thisURL != otherURL;
+}
+
+
+void URL::toLowerSchemeNetloc (string & url) {
+  string::iterator begin;
+  string::iterator end = url.end();
+  string urlLowerCase;
+  unsigned int slashCounter = 0;
+  const unsigned int TARGET_SLASHES = 3;
+
+  /*
+    Iterate through the entire url, but stop making letters lower case after
+    TARGET_SLASHES forward slashes (i.e. HTTP://WWW.GOOGLE.COM/Hi -> 
+    http://www.google.com/Hi)
+  */
+  for (begin = url.begin(); begin < end; begin++) {
+    char currentChar = *begin;
+
+    if ('/' == currentChar) {
+      slashCounter++;
+    }
+
+    if (slashCounter < TARGET_SLASHES) {
+      currentChar = tolower(currentChar);
+    }
+
+    urlLowerCase.push_back(currentChar); 
+  }
+
+  url = urlLowerCase;
 }
 
 
@@ -296,7 +336,8 @@ bool URL::Test (ostream & os) {
   TEST(startURLConstructor.pageName == "coolEric.html");
   TEST(startURLConstructor.fullURL == "file:///home/eric/myWebPages/coolEric.html");
 
-  URL url2("file://");
+  string url2Str = "file://";
+  URL url2(url2Str);
   TEST(url2.prefix == "file://");
   TEST(url2.pageName == "");
   TEST(url2.fullURL == "file://");
@@ -355,9 +396,13 @@ void URL::parseURL (const string & url, string & urlPrefix, string & urlPageName
 
 URL & URL::copy (const URL & uCopy) {
   if (this != &uCopy) {
-    this->prefix = uCopy.prefix;
+    string uCopyPrefix = uCopy.prefix;
+    string uCopyFull = uCopy.fullURL;
+    toLowerSchemeNetloc(uCopyPrefix);
+    toLowerSchemeNetloc(uCopyFull);
+    this->prefix = uCopyPrefix;
     this->pageName = uCopy.pageName;
-    this->fullURL = uCopy.fullURL;    
+    this->fullURL = uCopyFull;    
   }
 
   return *this;

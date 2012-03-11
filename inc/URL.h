@@ -137,6 +137,15 @@ class URL {
 
 
     /**
+     *  Makes the scheme and net_loc portions of the url lower case, since
+     *  these parts are case insensitive
+     *
+     *  @param OUT `url` The url to modify
+     */
+    void toLowerSchemeNetloc (string & url);
+
+
+    /**
      *  Parses a url into its prefix and page name. For example,
      *
      *    url - http://www.google.com/apps/myCoolApp.html

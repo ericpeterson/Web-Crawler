@@ -50,7 +50,8 @@ URL & Occurrence::getURL () const {
 bool Occurrence::Test (ostream & os) {
   bool success = true;
 
-  URL url("http://www.lds.org/en/ensigns-are-cool.html");
+  string urlStr = "http://www.lds.org/en/ensigns-are-cool.html";
+  URL url(urlStr);
   Occurrence happen(url);
 
   TEST(happen.url.getFullURL() == "http://www.lds.org/en/ensigns-are-cool.html");
@@ -59,7 +60,9 @@ bool Occurrence::Test (ostream & os) {
   happen.increment();
   happen.increment();
 
-  URL url2("/happen", "http://www.google.com/hithere.html");
+  string url2StrRel = "/happen";
+  string url2StrBase = "http://www.google.com/hithere.html";
+  URL url2(url2StrRel, url2StrBase);
   Occurrence happening(url2);
   happening = happen;
 
