@@ -161,7 +161,7 @@ void HTMLParser::configureTagStart (HTMLToken & currentToken, string & currentUR
 
 
 void HTMLParser::configureTagEnd (const HTMLToken & currentToken, string & currentTag
-  , bool & inBody, bool & inHTML, bool & inTitle, bool & ignoreCurrentTag) {
+  , bool & inBody, bool & inHTML, bool & inTitle) {
 
   currentTag.clear();
   if (currentToken.GetValue() == "body") {
@@ -173,14 +173,12 @@ void HTMLParser::configureTagEnd (const HTMLToken & currentToken, string & curre
   if (currentToken.GetValue() == "title") {
     inTitle = false;
   }
-  ignoreCurrentTag = false;
 }
 
 
-bool HTMLParser::shouldWeUseTitle (const string & currentTag, const bool inHTML,
-  const bool ignoreCurrentTag) const {
+bool HTMLParser::shouldWeUseTitle (const string & currentTag, const bool inHTML) const {
 
- return ("title" == currentTag) && inHTML && !ignoreCurrentTag;
+ return ("title" == currentTag) && inHTML;
 }
 
 
@@ -199,7 +197,7 @@ void HTMLParser::parse (string & currentURL, URLInputStream & document,
   try {
     HTMLTokenizer tokenizer(&document);
     Tag currentTag;
-    bool ignoreCurrentTag = false, gotDescription = false, inBody = false;
+    bool gotDescription = false, inBody = false;
     bool inHTML = false, inTitle = false, firstHeader = true;
     int charCount = 0;
     const int descrLength = 100;
@@ -213,29 +211,29 @@ void HTMLParser::parse (string & currentURL, URLInputStream & document,
             , inHTML, inTitle, unprocessedPages);
           break;
         case TAG_END:
-          configureTagEnd(currentToken, currentTag, inBody, inHTML, inTitle
-            , ignoreCurrentTag);
+          configureTagEnd(currentToken, currentTag, inBody, inHTML, inTitle);
           break;
         case COMMENT:
           // ignore comments
           break;
         case TEXT:
-          ignoreCurrentTag = checkTag(currentTag);
-
+          if (checkTag(currentTag)) {
+            break;
+          }
           checkToIndexWords(inBody, inHTML, inTitle, currentToken, currentURL, words);
 
           // Get the description
-          if (shouldWeUseTitle(currentTag, inHTML, ignoreCurrentTag)) {
+          if (shouldWeUseTitle(currentTag, inHTML)) {
             description = currentToken.GetValue();
             gotDescription = !description.empty();
             firstHeader = false;
           } else if ((currentTag.length() > 1) && ('h' == currentTag.at(0)) &&
-            (isdigit(currentTag.at(1))) && (true == firstHeader) && !ignoreCurrentTag) {
+            (isdigit(currentTag.at(1))) && (true == firstHeader)) {
             description = currentToken.GetValue();
             gotDescription = !description.empty();
             firstHeader = false;
           } else if (inBody && !gotDescription && (charCount < descrLength) &&
-            inHTML && !ignoreCurrentTag) {
+            inHTML) {
             buildDescription(currentToken, descrLength, charCount, description, gotDescription);
           }
    

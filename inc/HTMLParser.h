@@ -143,7 +143,6 @@ class HTMLParser {
      *  @param OUT `inBody` Boolean that tells that we are in <body> tag
      *  @param OUT `inHTML` Boolean that tells that we are in <html> tag
      *  @param OUT `inTitle` Boolean that tells that we are in <title> tag
-     *  @param OUT `ignoreCurrentTag` Boolean that tells us to ignore script tags
      */
     void configureTagEnd (
         const HTMLToken & currentToken
@@ -151,7 +150,6 @@ class HTMLParser {
       , bool & inBody
       , bool & inHTML
       , bool & inTitle
-      , bool & ignoreCurrentTag
     );
 
 
@@ -180,12 +178,10 @@ class HTMLParser {
      *
      *  @param IN `currentTag` The current html tag we are parsing
      *  @param IN `inHTML` Boolean that tells that we are in <html> tag
-     *  @param IN `ignoreCurrentTag` Boolean that tells us to ignore script tags
      */
     bool shouldWeUseTitle (
         const string & currentTag
       , const bool inHTML
-      , const bool ignoreCurrentTag
     ) const;
 
 
