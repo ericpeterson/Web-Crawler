@@ -230,6 +230,26 @@ class HTMLParser {
 
 
     /**
+     *  Checks if we need to use <title> for description
+     *
+     *  @param IN `currentTag` The tag we are currently parsing
+     *  @param IN `inHTML` Boolean indicating if we are in <html> tag
+     *  @param IN `currentToken` The current HTML token we are working with
+     *  @param OUT `description` The description of the current web page
+     *  @param OUT `gotDescription` Boolean indicating whether the description is complete
+     *  @param OUT `firstHeader` Boolean indicating if we have seen a <h> tag
+     */
+    void checkTitle (
+        const string & currentTag
+      , const bool & inHTML
+      , const HTMLToken & currentToken
+      , string & description
+      , bool & gotDescription
+      , bool & firstHeader
+    );
+
+
+    /**
      *  Deallocates heap memory used by this HTMLParser
      */
     void free ();

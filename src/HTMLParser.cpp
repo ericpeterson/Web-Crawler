@@ -195,6 +195,18 @@ void HTMLParser::checkToIndexWords (const bool & inBody, const bool & inHTML, co
 }
 
 
+void HTMLParser::checkTitle (const string & currentTag, const bool & inHTML,
+  const HTMLToken & currentToken, string & description, bool & gotDescription,
+  bool & firstHeader) {
+
+  if (shouldWeUseTitle(currentTag, inHTML)) {
+    description = currentToken.GetValue();
+    gotDescription = !description.empty();
+    firstHeader = false;
+  } 
+}
+
+
 void HTMLParser::parse (string & currentURL, URLInputStream & document,
   Description & description, WordIndex & words, PageQueue & unprocessedPages) {
   try {
@@ -226,11 +238,8 @@ void HTMLParser::parse (string & currentURL, URLInputStream & document,
           checkToIndexWords(inBody, inHTML, inTitle, currentToken, currentURL, words);
 
           // Get the description
-          if (shouldWeUseTitle(currentTag, inHTML)) {
-            description = currentToken.GetValue();
-            gotDescription = !description.empty();
-            firstHeader = false;
-          } else if ((currentTag.length() > 1) && ('h' == currentTag.at(0)) &&
+          checkTitle(currentTag, inHTML, currentToken, description, gotDescription, firstHeader);
+          if ((currentTag.length() > 1) && ('h' == currentTag.at(0)) &&
             (isdigit(currentTag.at(1))) && (true == firstHeader)) {
             description = currentToken.GetValue();
             gotDescription = !description.empty();
@@ -278,7 +287,7 @@ bool HTMLParser::Test (ostream & os) {
 
   TEST(description == "Hello there");
 
-  const int WORD_COUNT = 45; 
+  const int WORD_COUNT = 47;
   TEST(words.GetSize() == WORD_COUNT);
 
   //cout << words << endl;
