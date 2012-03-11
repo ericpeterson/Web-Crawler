@@ -92,6 +92,16 @@ class HTMLParser {
 
 
     /**
+     *  Inserts `currentWord` into the words map
+     *
+     *  @param IN `currentURL` The URL to associate with `currentWord`
+     *  @param OUT `currentWord` The word to insert into the map
+     *  @param OUT `words` The WordIndex map where the word will be inserted
+     */
+    void insertWord (string & currentURL, string & currentWord, WordIndex & words);
+
+
+    /**
      *  Index the words in a <title> or <body> tag within <html> tag
      *  
      *  @param IN `currentToken` The current html token in parsing

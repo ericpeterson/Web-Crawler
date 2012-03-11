@@ -70,6 +70,17 @@ bool HTMLParser::checkTag (string & currentTag) {
   return ignoreCurrentTag;
 }
 
+void HTMLParser::insertWord (string & currentURL, string & currentWord,
+  WordIndex & words) {
+
+  StringUtil::ToLower(currentWord);
+  bool filterWord = stopWords.Contains(currentWord); 
+  if (!isdigit(currentWord.at(0)) && !filterWord) {
+    words.Insert(currentWord, currentURL);
+  }
+  currentWord = "";
+}
+
 
 void HTMLParser::indexWords (HTMLToken & currentToken, string & currentURL, WordIndex & words) {
   const char* text = currentToken.GetValue().c_str();
@@ -77,12 +88,7 @@ void HTMLParser::indexWords (HTMLToken & currentToken, string & currentURL, Word
   while (*text != '\0') {
     bool isWordChar = isWordCharacter(*text); 
     if (!isWordChar && (currentWord != "")) {
-      StringUtil::ToLower(currentWord);
-      bool filterWord = stopWords.Contains(currentWord); 
-      if (!isdigit(currentWord.at(0)) && !filterWord) {
-        words.Insert(currentWord, currentURL);
-      }
-      currentWord = "";
+      insertWord(currentURL, currentWord, words);
     } else if (isWordChar) {
       currentWord.append(1, *text);  
     }
@@ -92,7 +98,7 @@ void HTMLParser::indexWords (HTMLToken & currentToken, string & currentURL, Word
 
   // add the last word of the TEXT, if we missed it
   if (currentWord != "") {
-    words.Insert(currentWord, currentURL);
+    insertWord(currentURL, currentWord, words);
   }
 }
 
