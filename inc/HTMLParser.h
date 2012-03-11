@@ -179,13 +179,11 @@ class HTMLParser {
      *  Determines whether we should use the title for the description of a web page
      *
      *  @param IN `currentTag` The current html tag we are parsing
-     *  @param IN `gotDescription` A boolean indicating when the description is complete
      *  @param IN `inHTML` Boolean that tells that we are in <html> tag
      *  @param IN `ignoreCurrentTag` Boolean that tells us to ignore script tags
      */
     bool shouldWeUseTitle (
         const string & currentTag
-      , const bool gotDescription
       , const bool inHTML
       , const bool ignoreCurrentTag
     ) const;

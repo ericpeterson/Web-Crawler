@@ -177,10 +177,10 @@ void HTMLParser::configureTagEnd (const HTMLToken & currentToken, string & curre
 }
 
 
-bool HTMLParser::shouldWeUseTitle (const string & currentTag, const bool gotDescription,
-  const bool inHTML, const bool ignoreCurrentTag) const {
+bool HTMLParser::shouldWeUseTitle (const string & currentTag, const bool inHTML,
+  const bool ignoreCurrentTag) const {
 
- return ("title" == currentTag) && (!gotDescription) && inHTML && !ignoreCurrentTag;
+ return ("title" == currentTag) && inHTML && !ignoreCurrentTag;
 }
 
 
@@ -225,13 +225,12 @@ void HTMLParser::parse (string & currentURL, URLInputStream & document,
           checkToIndexWords(inBody, inHTML, inTitle, currentToken, currentURL, words);
 
           // Get the description
-          if (shouldWeUseTitle(currentTag, gotDescription, inHTML, ignoreCurrentTag)) {
+          if (shouldWeUseTitle(currentTag, inHTML, ignoreCurrentTag)) {
             description = currentToken.GetValue();
             gotDescription = !description.empty();
             firstHeader = false;
           } else if ((currentTag.length() > 1) && ('h' == currentTag.at(0)) &&
-            (isdigit(currentTag.at(1))) && (true == firstHeader) && inHTML &&
-            !ignoreCurrentTag) {
+            (isdigit(currentTag.at(1))) && (true == firstHeader) && !ignoreCurrentTag) {
             description = currentToken.GetValue();
             gotDescription = !description.empty();
             firstHeader = false;
