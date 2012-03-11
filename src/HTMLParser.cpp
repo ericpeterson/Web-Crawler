@@ -142,7 +142,8 @@ void HTMLParser::configureTagStart (HTMLToken & currentToken, string & currentUR
   if (("a" == currentTag) && inHTML) {
     string href = currentToken.GetAttribute("href");
 
-    if ("" != href) {
+    // For some reason if href="" then HTMLToken returns " as the href
+    if (("" != href) && ("\"" != href)) {
       /*
         URL constructor will auto-resolve href. The URL constructor is called
         under the hood by the 3-arg Page constructor.
