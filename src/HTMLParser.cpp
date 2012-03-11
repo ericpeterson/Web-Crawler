@@ -75,7 +75,7 @@ void HTMLParser::insertWord (string & currentURL, string & currentWord,
 
   StringUtil::ToLower(currentWord);
   bool filterWord = stopWords.Contains(currentWord); 
-  if (!isdigit(currentWord.at(0)) && !filterWord) {
+  if (isalpha(currentWord.at(0)) && !filterWord) {
     words.Insert(currentWord, currentURL);
   }
   currentWord = "";
