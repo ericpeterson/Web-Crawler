@@ -31,8 +31,8 @@ URL::URL (string absoluteURL) {
     this->parseURL(full, urlPrefix, urlPageName);
   }
 
-  removeFragment(urlPageName);  
-  removeFragment(full);
+  removeFragmentAndQuery(urlPageName);  
+  removeFragmentAndQuery(full);
 
   this->prefix = urlPrefix;
   this->pageName = urlPageName;
@@ -84,8 +84,8 @@ URL::URL (string url, string baseURL) {
 
   this->parseURL(resolvedURL, urlPrefix, urlPageName);
 
-  removeFragment(urlPageName);
-  removeFragment(resolvedURL);
+  removeFragmentAndQuery(urlPageName);
+  removeFragmentAndQuery(resolvedURL);
 
   this->prefix = urlPrefix;
   this->pageName = urlPageName;
@@ -160,9 +160,15 @@ string URL::getPageName () const {
 }
 
 
-void URL::removeFragment (string & Url) {
+void URL::removeFragmentAndQuery (string & Url) {
   // if page name has a fragment (#) then remove it
   size_t position = Url.find('#');
+  if (position != string::npos) {
+    Url = Url.substr(0, position);
+  }
+
+  // remove queries too
+  position = Url.find('?');
   if (position != string::npos) {
     Url = Url.substr(0, position);
   }

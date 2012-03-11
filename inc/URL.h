@@ -129,11 +129,11 @@ class URL {
 
 
     /**
-     *  Removes fragments (#) from url's
+     *  Removes fragments (#) and queries (?) from url's
      *
-     *  @param IN-OUT `Url` The url to purge of fragments
+     *  @param IN-OUT `Url` The url to purge
      */
-    static void removeFragment (string & Url);
+    static void removeFragmentAndQuery (string & Url);
 
 
     /**

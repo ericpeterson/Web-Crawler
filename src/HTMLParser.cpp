@@ -142,19 +142,21 @@ void HTMLParser::configureTagStart (HTMLToken & currentToken, string & currentUR
   if (("a" == currentTag) && inHTML) {
     string href = currentToken.GetAttribute("href");
 
-    /*
-      URL constructor will auto-resolve href. The URL constructor is called
-      under the hood by the 3-arg Page constructor.
-    */
-    Page hrefWrapper(currentURL, href, "");
+    if ("" != href) {
+      /*
+        URL constructor will auto-resolve href. The URL constructor is called
+        under the hood by the 3-arg Page constructor.
+      */
+      Page hrefWrapper(currentURL, href, "");
 
-    // filter the resolved href relative to the scope of start url
-    URL startURL(this->baseURL);
-    URLFilter filter(startURL);
-    string resolvedHREF = hrefWrapper.getURL().getFullURL();
-    bool shouldFilterHREF = filter.filter(resolvedHREF);
-    if (!shouldFilterHREF) {
-      unprocessedPages.enqueue(hrefWrapper);
+      // filter the resolved href relative to the scope of start url
+      URL startURL(this->baseURL);
+      URLFilter filter(startURL);
+      string resolvedHREF = hrefWrapper.getURL().getFullURL();
+      bool shouldFilterHREF = filter.filter(resolvedHREF);
+      if (!shouldFilterHREF) {
+        unprocessedPages.enqueue(hrefWrapper);
+      }
     }
   }
 }
