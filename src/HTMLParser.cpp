@@ -89,6 +89,11 @@ void HTMLParser::indexWords (HTMLToken & currentToken, string & currentURL, Word
 
     text++;
   }
+
+  // add the last word of the TEXT, if we missed it
+  if (currentWord != "") {
+    words.Insert(currentWord, currentURL);
+  }
 }
 
 

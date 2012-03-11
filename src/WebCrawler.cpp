@@ -77,14 +77,14 @@ void WebCrawler::crawl (FileName & stopWord) {
         , unprocessedPages
       );
 
+      // Save summary information for the page
+      currentPage.setDescription(description);
+      this->processedPages.Insert(currentPage);
+
       document.Close();
     } catch (CS240Exception & exception) {
       cout << exception.GetMessage() << endl;
     }
- 
-    // Save summary information for the page
-    currentPage.setDescription(description);
-    this->processedPages.Insert(currentPage); 
 
     // Repeat until there are no pages left to index
   }

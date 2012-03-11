@@ -113,23 +113,23 @@ Page & Page::copy (const Page & pageCopy) {
 
 
 ostream & operator << (ostream & stream, Page & page) {
-  stream << ("\t\t<page>\n");
-  stream << ("\t\t\t<url>\n\t\t\t");
+  stream << ("    <page>\n");
+  stream << ("      <url>\n        ");
   try {
     stream << StringUtil::EncodeToXmlCopy(page.getURL().getFullURL());
   } catch (CS240Exception & exception) {
     cout << exception.GetMessage() << endl;
   }
-  stream << ("\n\t\t\t</url>\n");
+  stream << ("\n      </url>\n");
 
-  stream << ("\t\t\t<description>");
+  stream << ("      <description>");
   try {
     stream << StringUtil::EncodeToXmlCopy(page.getDescription());
   } catch (CS240Exception & exception) {
     cout << exception.GetMessage() << endl;
   }
   stream << ("</description>\n");
-  stream << ("\t\t</page>\n");
+  stream << ("    </page>\n");
 
   return stream;
 }

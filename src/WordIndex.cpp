@@ -99,15 +99,15 @@ void WordIndex::traverseOccurrences (BSTNode<Occurrence>* node, ostream & stream
     traverseOccurrences(node->GetRight(), stream);
   }
 
-  stream << ("\t\t\t<occurrence>\n");
-  stream << ("\t\t\t\t<url>\n\t\t\t\t\t");
+  stream << ("      <occurrence>\n");
+  stream << ("        <url>\n          ");
   try {
     stream << StringUtil::EncodeToXmlCopy(node->GetValue().getURL().getFullURL());
   } catch (CS240Exception & exception) {
     cout << exception.GetMessage() << endl;
   }
-  stream << ("\n\t\t\t\t</url>\n");
-  stream << ("\t\t\t\t<count>");
+  stream << ("\n        </url>\n");
+  stream << ("        <count>");
 
   // convert count (int) to a string
   try {
@@ -119,7 +119,7 @@ void WordIndex::traverseOccurrences (BSTNode<Occurrence>* node, ostream & stream
     cout << exception.GetMessage() << endl;
   }
   stream << ("</count>\n");
-  stream << ("\t\t\t</occurrence>\n");
+  stream << ("      </occurrence>\n");
 }
 
 
@@ -139,8 +139,8 @@ void WordIndex::traverseWords (
     traverseWords(node->GetRight(), stream);
   }
 
-  stream << ("\t\t<word>\n");
-  stream << ("\t\t\t<value>");
+  stream << ("    <word>\n");
+  stream << ("      <value>");
   stream.flush();
   try {
     stream << StringUtil::EncodeToXmlCopy(node->GetValue().GetKey());
@@ -149,7 +149,7 @@ void WordIndex::traverseWords (
   }
   stream << ("</value>\n");
   traverseOccurrences(node->GetValue().GetValue().GetRoot(), stream);
-  stream << ("\t\t</word>\n");
+  stream << ("    </word>\n");
 }
 
 
