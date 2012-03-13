@@ -14,7 +14,7 @@ SRC_OBJ = obj
 SRC_OBJ_FILES = $(SRC_OBJ)/URL.o $(SRC_OBJ)/Page.o $(SRC_OBJ)/PageQueue.o \
   $(SRC_OBJ)/PageSet.o $(SRC_OBJ)/StopWords.o $(SRC_OBJ)/Occurrence.o \
   $(SRC_OBJ)/WordIndex.o $(SRC_OBJ)/HTMLParser.o $(SRC_OBJ)/URLFilter.o \
-  $(SRC_OBJ)/WebCrawler.o $(SRC_OBJ)/XMLGenerator.o
+  $(SRC_OBJ)/WebCrawler.o $(SRC_OBJ)/XMLGenerator.o $(SRC_OBJ)/Array.o
 
 SRC = src
 INCLUDE = inc
@@ -89,6 +89,9 @@ $(SRC_OBJ)/WebCrawler.o: $(SRC)/WebCrawler.cpp $(INCLUDE)/*.h $(LIB_INCLUDE)/*.h
 
 $(SRC_OBJ)/XMLGenerator.o: $(SRC)/XMLGenerator.cpp $(INCLUDE)/*.h $(LIB_INCLUDE)/*.h
 	g++ -o $(SRC_OBJ)/XMLGenerator.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/XMLGenerator.cpp
+
+$(SRC_OBJ)/Array.o: $(SRC)/Array.cpp $(INCLUDE)/*.h $(LIB_INCLUDE)/*.h
+	g++ -o $(SRC_OBJ)/Array.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/Array.cpp
 
 $(SRC_OBJ)/testDriver.o: $(SRC)/testDriver.cpp $(INCLUDE)/* $(LIB_INCLUDE)/UnitTest.h
 	g++ -o $(SRC_OBJ)/testDriver.o $(CFLAGS) -I $(INCLUDE) -I $(LIB_INCLUDE) $(SRC)/testDriver.cpp
