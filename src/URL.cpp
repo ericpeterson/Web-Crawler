@@ -122,6 +122,11 @@ void URL::toLowerSchemeNetloc (string & url) {
   unsigned int slashCounter = 0;
   const unsigned int TARGET_SLASHES = 3;
 
+  // this code assumes url is a valid absolute url
+  if(!checkIfValid(url)) {
+    return;
+  }
+
   /*
     Iterate through the entire url, but stop making letters lower case after
     TARGET_SLASHES forward slashes (i.e. HTTP://WWW.GOOGLE.COM/Hi -> 

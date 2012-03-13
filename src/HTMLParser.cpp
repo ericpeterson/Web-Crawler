@@ -123,20 +123,29 @@ void HTMLParser::buildDescription (HTMLToken & currentToken, const int & descrLe
 
 
 void HTMLParser::configureTagStart (HTMLToken & currentToken, string & currentURL
-  , string & currentTag, bool & inBody, bool & inHTML, bool & inTitle
-  , PageQueue & unprocessedPages) {
+  , string & currentTag, bool* & bools, PageQueue & unprocessedPages) {
+
+  bool inBody = bools[0];
+  bool inHTML = bools[1];
+  bool inTitle = bools[2];
+  bool inHeader = bools[3];
 
   currentTag = currentToken.GetValue();
   StringUtil::ToLower(currentTag);
   if (!inBody) {
-    inBody = (currentTag == "body");
+    bools[0] = (currentTag == "body");
   }
   if (!inHTML) {
-    inHTML = (currentTag == "html");
+    bools[1] = (currentTag == "html");
   }
   if (!inTitle) {
-    inTitle = (currentTag == "title");
+    bools[2] = (currentTag == "title");
   }
+  if (!inHeader && !currentTag.empty() && ('h' == currentTag.at(0)) &&
+    (isdigit(currentTag.at(1)))) {
+    bools[3] = true;  
+  }
+
 
   // links
   if (("a" == currentTag) && inHTML) {
@@ -164,7 +173,7 @@ void HTMLParser::configureTagStart (HTMLToken & currentToken, string & currentUR
 
 
 void HTMLParser::configureTagEnd (const HTMLToken & currentToken, string & currentTag
-  , bool & inBody, bool & inHTML, bool & inTitle) {
+  , bool & inBody, bool & inHTML, bool & inTitle, bool & inHeader) {
 
   currentTag.clear();
   if (currentToken.GetValue() == "body") {
@@ -175,6 +184,12 @@ void HTMLParser::configureTagEnd (const HTMLToken & currentToken, string & curre
   }
   if (currentToken.GetValue() == "title") {
     inTitle = false;
+  }
+
+  string currentTokenStr = currentToken.GetValue();
+  if (!currentTokenStr.empty() && ('h' == currentTokenStr.at(0)) &&
+    (isdigit(currentTokenStr.at(1)))) {
+    inHeader = false;
   }
 }
 
@@ -212,8 +227,10 @@ void HTMLParser::parse (string & currentURL, URLInputStream & document,
   try {
     HTMLTokenizer tokenizer(&document);
     Tag currentTag;
-    bool gotDescription = false, inBody = false;
+    bool gotDescription = false, inBody = false, inHeader = false;
     bool inHTML = false, inTitle = false, firstHeader = true;
+    bool boolArray[4] = {inBody, inHTML, inTitle, inHeader};
+    bool* startBool = &boolArray[0];
     int charCount = 0;
     const int descrLength = 100;
 
@@ -222,11 +239,11 @@ void HTMLParser::parse (string & currentURL, URLInputStream & document,
    
       switch (currentToken.GetType()) {
         case TAG_START:
-          configureTagStart(currentToken, currentURL, currentTag, inBody
-            , inHTML, inTitle, unprocessedPages);
+          configureTagStart(currentToken, currentURL, currentTag, startBool, unprocessedPages);
           break;
         case TAG_END:
-          configureTagEnd(currentToken, currentTag, inBody, inHTML, inTitle);
+          configureTagEnd(currentToken, currentTag, boolArray[0], boolArray[1],
+            boolArray[2], boolArray[3]);
           break;
         case COMMENT:
           // ignore comments
@@ -235,17 +252,18 @@ void HTMLParser::parse (string & currentURL, URLInputStream & document,
           if (checkTag(currentTag)) {
             break;
           }
-          checkToIndexWords(inBody, inHTML, inTitle, currentToken, currentURL, words);
+          checkToIndexWords(boolArray[0], boolArray[1], boolArray[2],
+            currentToken, currentURL, words);
 
           // Get the description
-          checkTitle(currentTag, inHTML, currentToken, description, gotDescription, firstHeader);
-          if ((currentTag.length() > 1) && ('h' == currentTag.at(0)) &&
-            (isdigit(currentTag.at(1))) && (true == firstHeader)) {
+          checkTitle(currentTag, boolArray[1], currentToken, description,
+            gotDescription, firstHeader);
+          if (boolArray[3] && (true == firstHeader)) {
             description = currentToken.GetValue();
             gotDescription = !description.empty();
             firstHeader = false;
-          } else if (inBody && !gotDescription && (charCount < descrLength) &&
-            inHTML) {
+          } else if (boolArray[0] && !gotDescription && (charCount < descrLength) &&
+            boolArray[1]) {
             buildDescription(currentToken, descrLength, charCount, description, gotDescription);
           }
    

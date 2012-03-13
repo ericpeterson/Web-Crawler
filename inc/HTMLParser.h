@@ -122,15 +122,14 @@ class HTMLParser {
      *  @param IN-OUT `inBody` Boolean that tells that we are in <body> tag
      *  @param IN-OUT `inHTML` Boolean that tells that we are in <html> tag
      *  @param IN-OUT `inTitle` Boolean that tells that we are in <title> tag
+     *  @param IN-OUT `inTitle` Boolean that tells that we are in <h> tag
      *  @param OUT `unprocessedPages` The queue of pages yet to be indexed
      */
     void configureTagStart (
         HTMLToken & currentToken
       , string & currentURL
       , string & currentTag
-      , bool & inBody
-      , bool & inHTML
-      , bool & inTitle
+      , bool* & bools
       , PageQueue & unprocessedPages
     ); 
 
@@ -143,6 +142,7 @@ class HTMLParser {
      *  @param OUT `inBody` Boolean that tells that we are in <body> tag
      *  @param OUT `inHTML` Boolean that tells that we are in <html> tag
      *  @param OUT `inTitle` Boolean that tells that we are in <title> tag
+     *  @param OUT `inHeader` Boolean that tells that we are in <h> tag
      */
     void configureTagEnd (
         const HTMLToken & currentToken
@@ -150,6 +150,7 @@ class HTMLParser {
       , bool & inBody
       , bool & inHTML
       , bool & inTitle
+      , bool & inHeader
     );
 
 
