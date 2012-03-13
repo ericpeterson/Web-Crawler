@@ -6,7 +6,7 @@
 
 
 // An abstraction for length and capacity's type
-typedef unsigned int Size;
+typedef unsigned int ArraySize;
 
 
 /*
@@ -35,7 +35,7 @@ class Array {
      *  @param `maxLength` The initial capacity of this Array. Defaults to
      *    DEFAULT_CAPACITY.
      */
-    Array (Size maxLength = DEFAULT_CAPACITY);
+    Array (ArraySize maxLength = DEFAULT_CAPACITY);
 
 	
     /**
@@ -60,12 +60,24 @@ class Array {
 
 
     /**
+     *  Overloaded version of Push()
+     */
+    void Push (const char* value);    
+
+
+    /**
      *  Inserts `value` into the left-most, non-occupied slot in this Array
      *  until the capacity is reached. Then this Array's capacity increases.
      *
      *  @param `value` The new value to be inserted
      */
     void Push (const std::string & value);
+
+
+    /**
+     *  Overloaded version of Contains()
+     */    
+    bool Contains (const char* value);
 
 
     /**
@@ -78,7 +90,7 @@ class Array {
 
 
     // @return The length of this Array
-    Size GetLength () const;
+    ArraySize GetLength () const;
 
 
     // @return A pointer to the elements in this Array
@@ -95,8 +107,8 @@ class Array {
   private:
 
     std::string* elements;
-    Size length;
-    Size capacity;
+    ArraySize length;
+    ArraySize capacity;
 
 
     /**

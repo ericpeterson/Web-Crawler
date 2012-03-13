@@ -11,10 +11,10 @@ using namespace std;
 
 
 // An abstraction for length and capacity's type
-typedef unsigned int Size;
+typedef unsigned int ArraySize;
 
 
-Array::Array (Size maxLength) : length(0), capacity(maxLength) {
+Array::Array (ArraySize maxLength) : length(0), capacity(maxLength) {
   // initialize elements on heap
   try {
     elements = new string[capacity];
@@ -42,8 +42,14 @@ Array & Array::operator = (const Array & arr) {
 }
 
 
+void Array::Push (const char* value) {
+  string valueStr = value;
+  Push(valueStr);
+}
+
+
 void Array::Push (const string & value) {
-  Size index = this->length;
+  ArraySize index = this->length;
   this->elements[index] = value;
 
   this->length++;
@@ -52,6 +58,12 @@ void Array::Push (const string & value) {
   if (this->length == this->capacity) {
     IncreaseCapacity(MULT_FACTOR);
   }
+}
+
+
+bool Array::Contains (const char* value) {
+  string valueStr = value;
+  return Contains(valueStr);
 }
 
 
@@ -70,7 +82,7 @@ bool Array::Contains (const string & value) {
 }
 
 
-Size Array::GetLength () const {
+ArraySize Array::GetLength () const {
   return this->length;
 }
 
@@ -85,23 +97,73 @@ bool Array::Test (ostream & os) {
 
   Array arr;
 
-  TEST(arr.elements == NULL);
+  TEST(arr.elements != NULL);
   TEST(arr.length == 0);
-  TEST(arr.capacity == 0);
+  TEST(arr.capacity == DEFAULT_CAPACITY);
+
+  const ArraySize CAP = 5;
+  Array arr2(CAP);
+
+  TEST(arr2.elements != NULL);
+  TEST(arr2.length == 0);
+  TEST(arr2.capacity == CAP);
+
+  const ArraySize TEST = 200;
+  for (ArraySize i = 0; i < TEST; i++) {arr2.Push("I know my abc's");}
+ 
+  TEST(arr2.length == TEST);
+  TEST(arr2.capacity == (CAP*MULT_FACTOR*MULT_FACTOR));
+
+  arr.Push("a");
+  arr.Push("be");
+  arr.Push("cat");
+  arr.Push("dog");
+  arr.Push("elephant");
+  arr.Push("ferret");
+  arr.Push("goat");
+  arr.Push("house");
+  arr.Push("igloo");
+
+  TEST(arr.length == 9);
+  TEST(arr.capacity == DEFAULT_CAPACITY);
+  TEST(arr.Contains("a"));
+  TEST(arr.Contains("be"));
+  TEST(arr.Contains("cat"));
+  TEST(arr.Contains("dog"));
+  TEST(arr.Contains("elephant"));
+  TEST(arr.Contains("ferret"));
+  TEST(arr.Contains("goat"));
+  TEST(arr.Contains("house"));
+  TEST(arr.Contains("igloo"));
+  TEST(!arr.Contains(""));
+  TEST(!arr.Contains("Eric"));
+  TEST(!arr.Contains("%$%$@#jasfj;qwoeij;;akdjIIJIJOIJ||ej1214938u54083u**(*3"));
+
+  Array arr3(arr);
+  TEST(&arr3.elements != &arr.elements);
+  TEST(arr3.length == arr.length);
+  TEST(arr3.capacity == arr.capacity);
+  TEST(arr3.Contains("dog"));
+
+  arr3 = arr2;
+  TEST(&arr3.elements != &arr2.elements);
+  TEST(arr3.length == arr2.length);
+  TEST(arr3.capacity == arr2.capacity);
+  TEST(arr3.Contains("I know my abc's"));
 
   return success;
 }
 
 
 void Array::IncreaseCapacity (const short multiplyFactor) {
-  Size newCapacity = (this->capacity * multiplyFactor);
-  Size newLength = this->length;
+  ArraySize newCapacity = (this->capacity * multiplyFactor);
+  ArraySize newLength = this->length;
 
   string* newElements = new string[newCapacity];
   string* oldElements = this->elements;
 
   // copy length old elements into larger array
-  for (Size i = 0; i < newLength; i++) {
+  for (ArraySize i = 0; i < newLength; i++) {
     newElements[i] = oldElements[i];
   }
 
@@ -124,14 +186,14 @@ void Array::free () {
 
 Array & Array::copy (const Array & arr) {
   if (this != &arr) {
-    Size arrCapacity = arr.capacity;
-    Size arrLength = arr.length;
+    ArraySize arrCapacity = arr.capacity;
+    ArraySize arrLength = arr.length;
 
     string* newElements = new string[arrCapacity];
     string* oldElements = arr.elements;
 
     // Copy elements to new array
-    for (Size i = 0; i < arrLength; i++) {
+    for (ArraySize i = 0; i < arrLength; i++) {
       newElements[i] = oldElements[i];
     }
 
@@ -163,35 +225,13 @@ int Compare (const void* key, const void* element) {
 
 
 ostream & operator << (ostream & os, const Array & arr) {
-  Size arrLength = arr.GetLength();
+  ArraySize arrLength = arr.GetLength();
   string* arrElements = arr.GetElements();
 
-  for(Size i = 0; i < arrLength; i++) {
+  for(ArraySize i = 0; i < arrLength; i++) {
     os << arrElements[i] << endl;
   }
 
   return os;
 }
 
-
-/*Array class for Stop Words
-Empty Array
-    empty string
-    string of length 1
-    string of length 2+
-
-Array with 1 element
-    empty string
-    string of length 1
-            one string in Array
-            one string not in Array
-    string of length 2+
-
-Array with 2+ elements
-    empty string
-    string of length 1
-    string of length 2+
-            one string in Array
-            one string not in Array
-
-*/
