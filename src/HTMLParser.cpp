@@ -176,19 +176,20 @@ void HTMLParser::configureTagEnd (const HTMLToken & currentToken, string & curre
   , bool & inBody, bool & inHTML, bool & inTitle, bool & inHeader, bool & firstHeader) {
 
   currentTag.clear();
-  if (currentToken.GetValue() == "body") {
+  string current = currentToken.GetValue(); 
+  StringUtil::ToLower(current);
+  if (current == "body") {
     inBody = false;
   }
-  if (currentToken.GetValue() == "html") {
+  if (current == "html") {
     inHTML = false;
   }
-  if (currentToken.GetValue() == "title") {
+  if (current == "title") {
     inTitle = false;
   }
 
-  string currentTokenStr = currentToken.GetValue();
-  if ((currentTokenStr.length() > 1) && ('h' == currentTokenStr.at(0)) &&
-    (isdigit(currentTokenStr.at(1)))) {
+  if ((current.length() > 1) && ('h' == current.at(0)) &&
+    (isdigit(current.at(1)))) {
     inHeader = false;
     firstHeader = false;
   }
