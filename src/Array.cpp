@@ -36,9 +36,6 @@ Array::~Array () {
 }
 
 
-//	Array & Overloaded assignment operator(const Array &)
-//		call free
-//		return copy
 Array & Array::operator = (const Array & arr) {
   free();
   return copy(arr);
@@ -85,6 +82,13 @@ string* Array::GetElements () const {
 
 bool Array::Test (ostream & os) {
   bool success = true;
+
+  Array arr;
+
+  TEST(arr.elements == NULL);
+  TEST(arr.length == 0);
+  TEST(arr.capacity == 0);
+
   return success;
 }
 
