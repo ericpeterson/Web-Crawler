@@ -201,8 +201,13 @@ bool HTMLParser::shouldWeUseTitle (const bool inTitle, const bool inHTML) const 
 }
 
 
-void HTMLParser::checkToIndexWords (const bool & inBody, const bool & inHTML, const bool & inTitle
-  , HTMLToken & currentToken, string & currentURL, WordIndex & words) {
+void HTMLParser::checkToIndexWords (const bool & ignore, const bool & inBody,
+  const bool & inHTML, const bool & inTitle, HTMLToken & currentToken, string &
+  currentURL, WordIndex & words) {
+
+  if (ignore) {
+    return;
+  }
 
   // Index words
   if (inHTML && (inTitle || inBody)) {
@@ -211,9 +216,13 @@ void HTMLParser::checkToIndexWords (const bool & inBody, const bool & inHTML, co
 }
 
 
-void HTMLParser::checkTitle (const bool & inTitle, const bool & inHTML,
-  const HTMLToken & currentToken, string & description, bool & gotDescription,
-  bool & firstHeader) {
+void HTMLParser::checkTitle (const bool & ignore, const bool & inTitle,
+    const bool & inHTML, const HTMLToken & currentToken, string & description,
+    bool & gotDescription, bool & firstHeader) {
+
+  if (ignore) {
+    return;
+  }
 
   if (shouldWeUseTitle(inTitle, inHTML)) {
     description += currentToken.GetValue();
@@ -228,7 +237,7 @@ void HTMLParser::parse (string & currentURL, URLInputStream & document,
   try {
     HTMLTokenizer tokenizer(&document);
     Tag currentTag;
-    bool gotDescription = false, inBody = false, inHeader = false;
+    bool gotDescription = false, inBody = false, inHeader = false, ignore = false;
     bool inHTML = false, inTitle = false, firstHeader = true, building = false;
     bool boolArray[4] = {inBody, inHTML, inTitle, inHeader};
     bool* startBool = &boolArray[0];
@@ -250,21 +259,19 @@ void HTMLParser::parse (string & currentURL, URLInputStream & document,
           // ignore comments
           break;
         case TEXT:
-          if (checkTag(currentTag)) {
-            break;
-          }
-          checkToIndexWords(boolArray[0], boolArray[1], boolArray[2],
+          ignore = checkTag(currentTag);
+          checkToIndexWords(ignore, boolArray[0], boolArray[1], boolArray[2],
             currentToken, currentURL, words);
 
           // Get the description
-          checkTitle(boolArray[2], boolArray[1], currentToken, description,
+          checkTitle(ignore, boolArray[2], boolArray[1], currentToken, description,
             gotDescription, firstHeader);
-          if (boolArray[3] && (true == firstHeader)) {
+          if (boolArray[3] && (true == firstHeader) && !ignore) {
             if (building) {description = ""; building = false;}
             description += currentToken.GetValue();
             gotDescription = !description.empty();
           } else if (boolArray[0] && !gotDescription && (charCount < descrLength) &&
-            boolArray[1]) { building = true;
+            boolArray[1] && !ignore) { building = true;
             buildDescription(currentToken, descrLength, charCount, description, gotDescription);
           }
    

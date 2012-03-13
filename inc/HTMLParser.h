@@ -156,6 +156,7 @@ class HTMLParser {
     /**
      *  Verifies that we need to index words
      *
+     *  @param IN `ignore` Boolean that tells that we should ignore current tag
      *  @param IN `inBody` Boolean that tells that we are in <body> tag
      *  @param IN `inHTML` Boolean that tells that we are in <html> tag
      *  @param IN `inTitle` Boolean that tells that we are in <title> tag
@@ -164,7 +165,8 @@ class HTMLParser {
      *  @param IN `words` The continuing word index for the web crawler
      */
     void checkToIndexWords (
-        const bool & inBody
+        const bool & ignore
+      , const bool & inBody
       , const bool & inHTML
       , const bool & inTitle
       , HTMLToken & currentToken
@@ -232,7 +234,8 @@ class HTMLParser {
     /**
      *  Checks if we need to use <title> for description
      *
-     *  @param OUT `inTitle` Boolean that tells that we are in <title> tag
+     *  @param IN `ignore` Boolean that tells that we should ignore current tag
+     *  @param IN `inTitle` Boolean that tells that we are in <title> tag
      *  @param IN `inHTML` Boolean indicating if we are in <html> tag
      *  @param IN `currentToken` The current HTML token we are working with
      *  @param OUT `description` The description of the current web page
@@ -240,7 +243,8 @@ class HTMLParser {
      *  @param OUT `firstHeader` Boolean indicating if we have seen a <h> tag
      */
     void checkTitle (
-        const bool & inTitle
+        const bool & ignore
+      , const bool & inTitle
       , const bool & inHTML
       , const HTMLToken & currentToken
       , string & description
