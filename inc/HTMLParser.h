@@ -119,10 +119,7 @@ class HTMLParser {
      *  @param IN `currentURL` The web page that will be mapped to the word
      *    (on which the word was found)
      *  @param IN-OUT `currentTag` The current html tag we are parsing
-     *  @param IN-OUT `inBody` Boolean that tells that we are in <body> tag
-     *  @param IN-OUT `inHTML` Boolean that tells that we are in <html> tag
-     *  @param IN-OUT `inTitle` Boolean that tells that we are in <title> tag
-     *  @param IN-OUT `inTitle` Boolean that tells that we are in <h> tag
+     *  @param IN-OUT `bools` [inBody, inHTML, inTitle, inHeader]
      *  @param OUT `unprocessedPages` The queue of pages yet to be indexed
      */
     void configureTagStart (
@@ -143,6 +140,7 @@ class HTMLParser {
      *  @param OUT `inHTML` Boolean that tells that we are in <html> tag
      *  @param OUT `inTitle` Boolean that tells that we are in <title> tag
      *  @param OUT `inHeader` Boolean that tells that we are in <h> tag
+     *  @param OUT `firstHeader` Boolean that tells that we are in first <h> tag
      */
     void configureTagEnd (
         const HTMLToken & currentToken
@@ -151,6 +149,7 @@ class HTMLParser {
       , bool & inHTML
       , bool & inTitle
       , bool & inHeader
+      , bool & firstHeader
     );
 
 
@@ -177,11 +176,11 @@ class HTMLParser {
     /**
      *  Determines whether we should use the title for the description of a web page
      *
-     *  @param IN `currentTag` The current html tag we are parsing
+     *  @param OUT `inTitle` Boolean that tells that we are in <title> tag
      *  @param IN `inHTML` Boolean that tells that we are in <html> tag
      */
     bool shouldWeUseTitle (
-        const string & currentTag
+        const bool inTitle
       , const bool inHTML
     ) const;
 
@@ -233,7 +232,7 @@ class HTMLParser {
     /**
      *  Checks if we need to use <title> for description
      *
-     *  @param IN `currentTag` The tag we are currently parsing
+     *  @param OUT `inTitle` Boolean that tells that we are in <title> tag
      *  @param IN `inHTML` Boolean indicating if we are in <html> tag
      *  @param IN `currentToken` The current HTML token we are working with
      *  @param OUT `description` The description of the current web page
@@ -241,7 +240,7 @@ class HTMLParser {
      *  @param OUT `firstHeader` Boolean indicating if we have seen a <h> tag
      */
     void checkTitle (
-        const string & currentTag
+        const bool & inTitle
       , const bool & inHTML
       , const HTMLToken & currentToken
       , string & description

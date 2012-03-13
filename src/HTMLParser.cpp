@@ -173,7 +173,7 @@ void HTMLParser::configureTagStart (HTMLToken & currentToken, string & currentUR
 
 
 void HTMLParser::configureTagEnd (const HTMLToken & currentToken, string & currentTag
-  , bool & inBody, bool & inHTML, bool & inTitle, bool & inHeader) {
+  , bool & inBody, bool & inHTML, bool & inTitle, bool & inHeader, bool & firstHeader) {
 
   currentTag.clear();
   if (currentToken.GetValue() == "body") {
@@ -187,16 +187,17 @@ void HTMLParser::configureTagEnd (const HTMLToken & currentToken, string & curre
   }
 
   string currentTokenStr = currentToken.GetValue();
-  if (!currentTokenStr.empty() && ('h' == currentTokenStr.at(0)) &&
+  if ((currentTokenStr.length() > 1) && ('h' == currentTokenStr.at(0)) &&
     (isdigit(currentTokenStr.at(1)))) {
     inHeader = false;
+    firstHeader = false;
   }
 }
 
 
-bool HTMLParser::shouldWeUseTitle (const string & currentTag, const bool inHTML) const {
+bool HTMLParser::shouldWeUseTitle (const bool inTitle, const bool inHTML) const {
 
- return ("title" == currentTag) && inHTML;
+ return inTitle && inHTML;
 }
 
 
@@ -210,12 +211,12 @@ void HTMLParser::checkToIndexWords (const bool & inBody, const bool & inHTML, co
 }
 
 
-void HTMLParser::checkTitle (const string & currentTag, const bool & inHTML,
+void HTMLParser::checkTitle (const bool & inTitle, const bool & inHTML,
   const HTMLToken & currentToken, string & description, bool & gotDescription,
   bool & firstHeader) {
 
-  if (shouldWeUseTitle(currentTag, inHTML)) {
-    description = currentToken.GetValue();
+  if (shouldWeUseTitle(inTitle, inHTML)) {
+    description += currentToken.GetValue();
     gotDescription = !description.empty();
     firstHeader = false;
   } 
@@ -228,7 +229,7 @@ void HTMLParser::parse (string & currentURL, URLInputStream & document,
     HTMLTokenizer tokenizer(&document);
     Tag currentTag;
     bool gotDescription = false, inBody = false, inHeader = false;
-    bool inHTML = false, inTitle = false, firstHeader = true;
+    bool inHTML = false, inTitle = false, firstHeader = true, building = false;
     bool boolArray[4] = {inBody, inHTML, inTitle, inHeader};
     bool* startBool = &boolArray[0];
     int charCount = 0;
@@ -243,7 +244,7 @@ void HTMLParser::parse (string & currentURL, URLInputStream & document,
           break;
         case TAG_END:
           configureTagEnd(currentToken, currentTag, boolArray[0], boolArray[1],
-            boolArray[2], boolArray[3]);
+            boolArray[2], boolArray[3], firstHeader);
           break;
         case COMMENT:
           // ignore comments
@@ -256,14 +257,14 @@ void HTMLParser::parse (string & currentURL, URLInputStream & document,
             currentToken, currentURL, words);
 
           // Get the description
-          checkTitle(currentTag, boolArray[1], currentToken, description,
+          checkTitle(boolArray[2], boolArray[1], currentToken, description,
             gotDescription, firstHeader);
           if (boolArray[3] && (true == firstHeader)) {
-            description = currentToken.GetValue();
+            if (building) {description = ""; building = false;}
+            description += currentToken.GetValue();
             gotDescription = !description.empty();
-            firstHeader = false;
           } else if (boolArray[0] && !gotDescription && (charCount < descrLength) &&
-            boolArray[1]) {
+            boolArray[1]) { building = true;
             buildDescription(currentToken, descrLength, charCount, description, gotDescription);
           }
    
