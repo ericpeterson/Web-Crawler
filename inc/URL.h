@@ -110,6 +110,14 @@ class URL {
      */
     static bool checkIfValid (string & url);
 
+
+    /**
+     *  Removes queries (?) from this url, but does not change the original
+     *
+     *  @param `Url` The Url to remove the query from.
+     */
+    static string removeQuery (string & Url);
+
   private:
 
     // The entire url except the page name
@@ -129,11 +137,11 @@ class URL {
 
 
     /**
-     *  Removes fragments (#) and queries (?) from url's
+     *  Removes fragments (#)
      *
      *  @param IN-OUT `Url` The url to purge
      */
-    static void removeFragmentAndQuery (string & Url);
+    static void removeFragment (string & Url);
 
 
     /**
