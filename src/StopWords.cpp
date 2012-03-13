@@ -2,16 +2,19 @@
 #include <iostream>
 #include <fstream>
 #include <cctype>
+#include <cassert>
 
 #include "StopWords.h"
-#include "Set.h"
+#include "Array.h"
+
 #include "StringUtil.h"
 #include "CS240Exception.h"
+#include "UnitTest.h"
 using namespace std;
 
 typedef string Word;
 
-StopWords::StopWords (const char* file) : Set<Word>::Set() {
+StopWords::StopWords (const char* file) : Array() {
   assert(NULL != file);
 
   ifstream stream(file);
@@ -26,7 +29,7 @@ StopWords::StopWords (const char* file) : Set<Word>::Set() {
     StringUtil::ToLower(currentWord);
     StringUtil::Trim(currentWord);
     if (!currentWord.empty()) {
-      Insert(currentWord);
+      this->Push(currentWord);
     }
   }
 
@@ -39,9 +42,7 @@ StopWords::~StopWords () {
 }
 
 
-StopWords::StopWords (const StopWords & swCopy) {
-  copy(swCopy);
-}
+StopWords::StopWords (const StopWords & swCopy) : Array(swCopy) {}
 
 
 StopWords & StopWords::operator = (const StopWords & swCopy) {
@@ -52,20 +53,19 @@ StopWords & StopWords::operator = (const StopWords & swCopy) {
 
 bool StopWords::Contains (string & word) const {
   StringUtil::ToLower(word);
-  return Set<Word>::Contains(word);
+  return Array::Contains(word);
 }
 
 
 bool StopWords::Contains (const char* word) const {
-  string wordStr(word);
-  return StopWords::Contains(wordStr);
+  return Array::Contains(word);
 }
 
 
 bool StopWords::Test (ostream & os) {
   bool success = true;
-  const int NUM_WORDS = 15;
-  const int NOT_INCLUDED = 10;
+  const ArraySize NUM_WORDS = 15;
+  const ArraySize NOT_INCLUDED = 10;
   const char* file = "test/stopWords.txt";
   const char* file2 = "test/stopWords2.txt";
   string words[NUM_WORDS] = {
@@ -82,17 +82,17 @@ bool StopWords::Test (ostream & os) {
   StopWords otherWords(file2);
   otherWords = myWords;
 
-  TEST(myWords.GetSize() == NUM_WORDS); 
-  TEST(otherWords.GetSize() == NUM_WORDS);
+  TEST(myWords.GetLength() == NUM_WORDS); 
+  TEST(otherWords.GetLength() == NUM_WORDS);
   TEST(&myWords != &otherWords);
 
-  for (int i = 0; i < NUM_WORDS; i++) {
+  for (ArraySize i = 0; i < NUM_WORDS; i++) {
     string currentWord(words[i]);
     TEST(myWords.Contains(currentWord) == true);
     TEST(otherWords.Contains(currentWord) == true);
   }
 
-  for (int i = 0; i < NOT_INCLUDED; i++) {
+  for (ArraySize i = 0; i < NOT_INCLUDED; i++) {
     string currentWord(notIncluded[i]);
     TEST(myWords.Contains(currentWord) == false);
     TEST(otherWords.Contains(currentWord) == false);
@@ -103,12 +103,12 @@ bool StopWords::Test (ostream & os) {
 
 
 StopWords & StopWords::copy (const StopWords & swCopy) {
-  Set<Word>::copy(swCopy);
+  Array::copy(swCopy);
   return *this;
 }
 
 
 void StopWords::free () {
-  Set<Word>::free();
+  Array::free();
 }
 

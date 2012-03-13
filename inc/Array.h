@@ -77,7 +77,7 @@ class Array {
     /**
      *  Overloaded version of Contains()
      */    
-    bool Contains (const char* value);
+    bool Contains (const char* value) const;
 
 
     /**
@@ -86,7 +86,7 @@ class Array {
      *  @param `value` The new value to be inserted
      *  @return true if `value` is found in this Array; false otherwise.
      */
-    bool Contains (const std::string & value);
+    bool Contains (const std::string & value) const;
 
 
     // @return The length of this Array
@@ -103,6 +103,22 @@ class Array {
      *  @param `os` The output stream to which test results will be sent
      */
     static bool Test (std::ostream & os);
+
+  protected:
+
+    /**
+     *  Deallocates heap memory used by this Array.
+     */
+    void free ();
+
+
+    /**
+     *  Makes a deep copy of an Array object
+     *
+     *  @param `arr` The Array to be copied
+     *  @return A reference to this Array
+     */
+    Array & copy (const Array & arr);
 
   private:
 
@@ -122,19 +138,6 @@ class Array {
 
 
 
-    /**
-     *  Deallocates heap memory used by this Array.
-     */
-    void free ();
-
-
-    /**
-     *  Makes a deep copy of an Array object
-     *
-     *  @param `arr` The Array to be copied
-     *  @return A reference to this Array
-     */
-    Array & copy (const Array & arr);
 };
 
 

@@ -61,13 +61,13 @@ void Array::Push (const string & value) {
 }
 
 
-bool Array::Contains (const char* value) {
+bool Array::Contains (const char* value) const {
   string valueStr = value;
   return Contains(valueStr);
 }
 
 
-bool Array::Contains (const string & value) {
+bool Array::Contains (const string & value) const {
   string key = value;
   string* base = this->elements;
   size_t num = this->length;

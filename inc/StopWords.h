@@ -3,7 +3,9 @@
 
 #include <string>
 #include <iostream>
-#include "Set.h"
+
+#include "Array.h"
+
 using namespace std;
 
 typedef string Word;
@@ -15,7 +17,7 @@ typedef string Word;
  *
  *    * Load and store stop words
  */
-class StopWords : public Set<Word> {
+class StopWords : public Array {
   public:
 
     /**
